@@ -4,6 +4,8 @@ import NextTopLoader from "nextjs-toploader";
 
 import { Toaster } from "@/components/ui/sonner";
 
+import { site } from "@/configs/site";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -11,8 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: { absolute: "NBU Bags", template: "%s | NBU Bags" },
-  description: "Fashionable bags collections",
+  title: { absolute: site.name, template: `%s | ${site.name}` },
+  description: site.description,
 };
 
 export default function RootLayout({

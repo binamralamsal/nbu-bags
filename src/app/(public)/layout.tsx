@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Home",
 };
 
-export default function RootLayout({
+export default function PublicLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

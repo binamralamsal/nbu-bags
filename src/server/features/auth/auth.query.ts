@@ -34,4 +34,6 @@ export async function redirectIfAuthorized() {
 export async function redirectIfUnauthorized() {
   const currentUser = await getCurrentUser();
   if (!currentUser) return redirect(REDIRECT_URL_IF_UNAUTHORIZED);
+
+  return currentUser;
 }

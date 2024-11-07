@@ -2,11 +2,11 @@ import { AdminSidebarPageWrapper } from "@/components/admin-sidebar-page-wrapper
 
 import { redirectIfUnauthorized } from "@/server/features/auth/auth.query";
 
-export default async function AdminDashboard() {
+export default async function AdminDashboardProducts() {
   await redirectIfUnauthorized();
 
   return (
-    <AdminSidebarPageWrapper pageTitle="Home">
+    <AdminSidebarPageWrapper pageTitle="Products">
       <div></div>
     </AdminSidebarPageWrapper>
   );

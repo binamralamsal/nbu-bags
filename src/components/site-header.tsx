@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
+import { site } from "@/configs/site";
 import { cn } from "@/utils/cn";
 
 import { DesktopNav } from "./desktop-nav";
@@ -36,7 +37,7 @@ export function SiteHeader() {
     >
       <div className="container flex items-center justify-between">
         <Link href="/">
-          NBU Bags
+          {site.name}
           {/* <NexorithLogo className="h-8" /> */}
         </Link>
 

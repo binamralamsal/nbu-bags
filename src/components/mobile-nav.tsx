@@ -16,7 +16,7 @@ import {
 
 import { Menu } from "lucide-react";
 
-import { navLinks } from "@/configs/site";
+import { navLinks, site } from "@/configs/site";
 import { cn } from "@/utils/cn";
 
 export function MobileNav() {
@@ -34,7 +34,7 @@ export function MobileNav() {
       <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>
-            NBU Bags
+            {site.name}
             {/* <NexorithLogo className="h-8" /> */}
           </SheetTitle>
         </SheetHeader>
