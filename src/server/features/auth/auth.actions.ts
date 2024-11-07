@@ -48,6 +48,7 @@ export async function loginUserAction(body: z.infer<typeof authorizeUserDTO>) {
 
     return successResponse("Logged in successfully", userResponse);
   } catch (err) {
+    console.log(err);
     if (!(err instanceof Error)) return internalServerErrorResponse();
     return errorResponse(err.message);
   }

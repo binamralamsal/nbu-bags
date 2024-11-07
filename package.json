@@ -9,9 +9,11 @@
     "lint": "next lint",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "create-user": "bun run ./src/utils/create-user.ts"
   },
   "dependencies": {
+    "@inquirer/prompts": "^7.0.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -25,6 +27,7 @@
     "lucide-react": "^0.454.0",
     "next": "^15.0.2",
     "next-themes": "^0.4.3",
+    "nextjs-toploader": "^3.7.15",
     "pg": "^8.13.1",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",

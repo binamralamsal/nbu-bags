@@ -35,6 +35,7 @@ export async function registerUser(data: {
   email: string;
   name: string;
   password: string;
+  role?: "admin" | "user";
 }) {
   const hashedPassword = await hashPassword(data.password);
 
@@ -45,6 +46,7 @@ export async function registerUser(data: {
         .values({
           name: data.name,
           password: hashedPassword,
+          role: data.role,
         })
         .returning({ userId: usersTable.id });
 
@@ -127,7 +129,7 @@ export function createRefreshToken(sessionToken: string) {
 }
 
 export async function authorizeUser(data: { email: string; password: string }) {
-  const [{ password: hashedPassword, ...currentUser }] = await db
+  const [user] = await db
     .select({
       userId: usersTable.id,
       name: usersTable.name,
@@ -138,8 +140,10 @@ export async function authorizeUser(data: { email: string; password: string }) {
     .innerJoin(emailsTable, eq(emailsTable.userId, usersTable.id))
     .where(eq(emailsTable.email, data.email))
     .limit(1);
-
   const errorMessage = "Invalid username or password";
+
+  if (!user) throw new Error(errorMessage);
+  const { password: hashedPassword, ...currentUser } = user;
 
   if (!currentUser) throw new Error(errorMessage);
 

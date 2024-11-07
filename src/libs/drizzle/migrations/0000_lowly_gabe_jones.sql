@@ -1,5 +1,6 @@
+CREATE TYPE "public"."role" AS ENUM('admin', 'user');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "emails" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "emails_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"user_id" integer NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"is_verified" boolean DEFAULT false NOT NULL,
@@ -9,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "emails" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "sessions" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "sessions_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"session_token" text DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" integer NOT NULL,
 	"valid" boolean DEFAULT true NOT NULL,
@@ -21,9 +22,10 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"name" text NOT NULL,
 	"password" text NOT NULL,
+	"role" "role" DEFAULT 'user',
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

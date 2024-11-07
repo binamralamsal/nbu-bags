@@ -2,18 +2,21 @@ import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
-  serial,
   text,
   timestamp,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 
+export const roleEnum = pgEnum("role", ["admin", "user"]);
+
 export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   password: text("password").notNull(),
+  role: roleEnum().default("user"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -24,7 +27,7 @@ export const usersTable = pgTable("users", {
 export const emailsTable = pgTable(
   "emails",
   {
-    id: serial("id").primaryKey(),
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     userId: integer("user_id")
       .notNull()
       .unique()
@@ -43,7 +46,7 @@ export const emailsTable = pgTable(
 );
 
 export const sessionsTable = pgTable("sessions", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   sessionToken: text("session_token")
     .notNull()
     .default(sql`gen_random_uuid()`)
@@ -60,9 +63,6 @@ export const sessionsTable = pgTable("sessions", {
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
-
-
-
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
   email: one(emailsTable, {

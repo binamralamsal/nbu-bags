@@ -33,3 +33,4 @@ export const RESET_PASSWORD_EXPIRY =
   MILLISECONDS_PER_SECOND;
 
 export const REDIRECT_URL_IF_AUTHORIZED = "/";
+export const REDIRECT_URL_IF_UNAUTHORIZED = "/login";

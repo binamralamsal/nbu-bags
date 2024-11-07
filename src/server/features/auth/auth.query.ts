@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import {
   ACCESS_TOKEN_KEY,
   REDIRECT_URL_IF_AUTHORIZED,
+  REDIRECT_URL_IF_UNAUTHORIZED,
 } from "@/configs/constants";
 
 import { getUserFromAccessToken } from "./auth.services";
@@ -28,4 +29,9 @@ export const getCurrentUser = cache(async () => {
 export async function redirectIfAuthorized() {
   const currentUser = await getCurrentUser();
   if (currentUser) return redirect(REDIRECT_URL_IF_AUTHORIZED);
+}
+
+export async function redirectIfUnauthorized() {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return redirect(REDIRECT_URL_IF_UNAUTHORIZED);
 }
