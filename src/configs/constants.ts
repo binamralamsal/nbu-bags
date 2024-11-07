@@ -34,3 +34,6 @@ export const RESET_PASSWORD_EXPIRY =
 
 export const REDIRECT_URL_IF_AUTHORIZED = "/";
 export const REDIRECT_URL_IF_UNAUTHORIZED = "/login";
+
+export const roles = ["user", "admin"] as const;
+export const defaultRole: (typeof roles)[number] = "user";

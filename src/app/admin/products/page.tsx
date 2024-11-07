@@ -1,13 +1,13 @@
-import { AdminSidebarPageWrapper } from "@/components/admin-sidebar-page-wrapper";
+import { AdminPageWrapper } from "@/components/admin-page-wrapper";
 
-import { redirectIfUnauthorized } from "@/server/features/auth/auth.query";
+import { redirectIfNotAdmin } from "@/server/features/auth/auth.query";
 
 export default async function AdminDashboardProducts() {
-  await redirectIfUnauthorized();
+  await redirectIfNotAdmin();
 
   return (
-    <AdminSidebarPageWrapper pageTitle="Products">
+    <AdminPageWrapper pageTitle="Products">
       <div></div>
-    </AdminSidebarPageWrapper>
+    </AdminPageWrapper>
   );
 }

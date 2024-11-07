@@ -10,13 +10,15 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const roleEnum = pgEnum("role", ["admin", "user"]);
+import { defaultRole, roles } from "@/configs/constants";
+
+export const roleEnum = pgEnum("role", roles);
 
 export const usersTable = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   password: text("password").notNull(),
-  role: roleEnum().default("user"),
+  role: roleEnum().default(defaultRole).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -62,6 +64,12 @@ export const sessionsTable = pgTable("sessions", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
+});
+
+export const categoriesTable = pgTable("categories", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
 });
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({

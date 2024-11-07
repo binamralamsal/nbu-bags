@@ -1,5 +1,7 @@
 import { ComponentProps } from "react";
 
+import Link from "next/link";
+
 import {
   Sidebar,
   SidebarContent,
@@ -40,7 +42,7 @@ const nav = [
       },
       {
         title: "Categories",
-        url: "admin/products/categories",
+        url: "/admin/products/categories",
       },
     ],
   },
@@ -57,7 +59,7 @@ export async function AdminSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link href="/admin">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <CommandIcon className="size-4" />
                 </div>
@@ -65,7 +67,7 @@ export async function AdminSidebar({
                   <span className="truncate font-semibold">{site.name}</span>
                   <span className="truncate text-xs">v{site.version}</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

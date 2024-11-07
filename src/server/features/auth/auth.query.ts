@@ -37,3 +37,15 @@ export async function redirectIfUnauthorized() {
 
   return currentUser;
 }
+
+export async function redirectIfNotAdmin() {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || currentUser.role !== "admin") {
+    const params = new URLSearchParams({ redirect_url: "/admin" });
+    const redirectUrl = `${REDIRECT_URL_IF_UNAUTHORIZED}?${params.toString()}`;
+
+    return redirect(redirectUrl);
+  }
+
+  return currentUser;
+}

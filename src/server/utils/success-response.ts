@@ -1,10 +1,16 @@
 import { STATUS } from "@/configs/constants";
 
+export function successResponse<T>(
+  message: string,
+  data: T,
+): { status: typeof STATUS.SUCCESS; message: string; data: T };
+export function successResponse(message: string): {
+  status: typeof STATUS.SUCCESS;
+  message: string;
+};
 export function successResponse<T>(message: string, data?: T) {
-  const response = { status: STATUS.SUCCESS, message };
-  if (data !== undefined) {
-    return { ...response, data };
+  if (typeof data !== "undefined") {
+    return { status: STATUS.SUCCESS, message, data };
   }
-
-  return response;
+  return { status: STATUS.SUCCESS, message };
 }

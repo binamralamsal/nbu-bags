@@ -35,27 +35,25 @@ export async function registerUser(data: {
   email: string;
   name: string;
   password: string;
-  role?: "admin" | "user";
 }) {
   const hashedPassword = await hashPassword(data.password);
 
   try {
     return await db.transaction(async (tx) => {
-      const [{ userId }] = await tx
+      const [{ userId, role }] = await tx
         .insert(usersTable)
         .values({
           name: data.name,
           password: hashedPassword,
-          role: data.role,
         })
-        .returning({ userId: usersTable.id });
+        .returning({ userId: usersTable.id, role: usersTable.role });
 
       await tx.insert(emailsTable).values({
         userId: userId,
         email: data.email,
       });
 
-      return { userId, name: data.name, email: data.email };
+      return { userId, name: data.name, email: data.email, role };
     });
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {
@@ -86,6 +84,7 @@ export async function logUserIn(data: {
   userId: number;
   name: string;
   email: string;
+  role: string;
 }) {
   const ip = await getIP();
   const userAgent = (await headers()).get("user-agent");
@@ -115,6 +114,7 @@ export function createAccessToken(data: {
   userId: number;
   name: string;
   email: string;
+  role: string;
 }) {
   const now = Math.floor(Date.now() / 1000);
   return jwt.sign({ ...data, exp: now + ACCESS_TOKEN_EXPIRY }, env.JWT_SECRET);
@@ -135,6 +135,7 @@ export async function authorizeUser(data: { email: string; password: string }) {
       name: usersTable.name,
       password: usersTable.password,
       email: emailsTable.email,
+      role: usersTable.role,
     })
     .from(usersTable)
     .innerJoin(emailsTable, eq(emailsTable.userId, usersTable.id))
@@ -195,6 +196,7 @@ export async function refreshTokens(refreshToken: string) {
       .select({
         userId: usersTable.id,
         name: usersTable.name,
+        role: usersTable.role,
         sessionToken: sessionsTable.sessionToken,
         isSessionValid: sessionsTable.valid,
         email: emailsTable.email,
@@ -211,6 +213,7 @@ export async function refreshTokens(refreshToken: string) {
       userId: user.userId,
       email: user.email,
       name: user.name,
+      role: user.role,
     });
     const refreshTokenJwt = createRefreshToken(user.sessionToken);
 

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { defaultRole, roles } from "@/configs/constants";
+
 export const emailDTO = z
   .string()
   .trim()
@@ -51,6 +53,7 @@ export const accessTokenDTO = refreshTokenDTO.extend({
   userId: z
     .number()
     .positive({ message: "User ID must be a positive integer." }),
+  role: z.enum(roles).default(defaultRole),
   name: z.string().min(1, { message: "Name is required." }),
   email: emailDTO,
 });

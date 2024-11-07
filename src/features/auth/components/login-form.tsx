@@ -3,7 +3,7 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,9 @@ export function LoginForm() {
   const [loginPassword, setLoginPassword] = useState("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const redirectUrl = searchParams.get("redirect_url");
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,7 +31,7 @@ export function LoginForm() {
 
     if (response.status === "SUCCESS") {
       toast.success(response.message);
-      router.push("/");
+      router.push(redirectUrl || "/");
       router.refresh();
     } else {
       toast.error(response.message);

@@ -1,16 +1,16 @@
-import { AdminSidebarPageWrapper } from "@/components/admin-sidebar-page-wrapper";
+import { AdminPageWrapper } from "@/components/admin-page-wrapper";
 
-import { redirectIfUnauthorized } from "@/server/features/auth/auth.query";
+import { redirectIfNotAdmin } from "@/server/features/auth/auth.query";
 
 export default async function AdminDashboardCategories() {
-  await redirectIfUnauthorized();
+  await redirectIfNotAdmin();
 
   return (
-    <AdminSidebarPageWrapper
+    <AdminPageWrapper
       breadcrumbs={[{ label: "Products", href: "/admin/products" }]}
       pageTitle="Categories"
     >
       <div></div>
-    </AdminSidebarPageWrapper>
+    </AdminPageWrapper>
   );
 }
