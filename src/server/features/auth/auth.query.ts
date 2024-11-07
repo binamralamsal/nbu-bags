@@ -17,7 +17,12 @@ export const getCurrentUser = cache(async () => {
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY);
 
   if (!accessToken) return null;
-  return getUserFromAccessToken(accessToken.value);
+  try {
+    const user = getUserFromAccessToken(accessToken.value);
+    return user;
+  } catch {
+    return null;
+  }
 });
 
 export async function redirectIfAuthorized() {

@@ -26,6 +26,8 @@ export default async function middleware(request: NextRequest) {
     const parsedCookies = parseCookies(responseCookie);
     const redirectResponse = NextResponse.redirect(request.url);
 
+    console.log(JSON.stringify({ parsedCookies, responseCookie }));
+
     redirectResponse.cookies.set(
       "accessToken",
       parsedCookies.accessToken?.value || "",

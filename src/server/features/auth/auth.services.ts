@@ -226,3 +226,22 @@ export async function refreshTokens(refreshToken: string) {
     throw new UnauthorizedError();
   }
 }
+
+export async function logoutUser(rawRefreshToken: string) {
+  try {
+    const refreshTokenJwt = jwt.verify(rawRefreshToken, env.JWT_SECRET);
+    const validatedRefreshToken = refreshTokenDTO.parse(refreshTokenJwt);
+
+    await db
+      .delete(sessionsTable)
+      .where(
+        eq(sessionsTable.sessionToken, validatedRefreshToken.sessionToken),
+      );
+
+    const cookieStore = await cookies();
+    cookieStore.delete(REFRESH_TOKEN_KEY);
+    cookieStore.delete(ACCESS_TOKEN_KEY);
+  } catch {
+    throw new UnauthorizedError();
+  }
+}

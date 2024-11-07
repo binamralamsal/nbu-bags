@@ -11,7 +11,9 @@ export async function POST() {
 
   try {
     await refreshTokens(refreshToken.value);
-  } catch {}
+  } catch (err) {
+    console.log("asdf", err);
+  }
 
   return new Response("Refreshed token successfully", { status: 200 });
 }
