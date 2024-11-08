@@ -1,9 +1,9 @@
 import { AdminPageWrapper } from "@/components/admin-page-wrapper";
 
-import { redirectIfNotAdmin } from "@/features/auth/server/auth.query";
+import { ensureAdmin } from "@/features/auth/server/auth.query";
 
 export default async function AdminDashboard() {
-  await redirectIfNotAdmin();
+  await ensureAdmin({ redirect: true });
 
   return (
     <AdminPageWrapper pageTitle="Home">

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-import { redirectIfNotAdmin } from "@/features/auth/server/auth.query";
+import { ensureAdmin } from "@/features/auth/server/auth.query";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -15,7 +15,7 @@ export default async function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  await redirectIfNotAdmin();
+  await ensureAdmin({ redirect: true });
 
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";

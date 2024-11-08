@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
 
-import { loginUserAction } from "@/server/features/auth/auth.actions";
+import { loginUserAction } from "../server/auth.actions";
 
 export function LoginForm() {
   const [loginEmail, setLoginEmail] = useState("");

@@ -22,10 +22,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { UploadIcon } from "lucide-react";
 
-import { redirectIfNotAdmin } from "@/features/auth/server/auth.query";
+import { ensureAdmin } from "@/features/auth/server/auth.query";
 
 export default async function AdminDashboardNewProduct() {
-  await redirectIfNotAdmin();
+  await ensureAdmin({ redirect: true });
 
   return (
     <AdminPageWrapper

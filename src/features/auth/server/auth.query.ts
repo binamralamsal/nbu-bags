@@ -10,6 +10,7 @@ import {
   REDIRECT_URL_IF_AUTHORIZED,
   REDIRECT_URL_IF_UNAUTHORIZED,
 } from "@/configs/constants";
+import { UnauthorizedError } from "@/errors/unauthorized-error";
 
 import { getUserFromAccessToken } from "./auth.services";
 
@@ -38,13 +39,16 @@ export async function redirectIfUnauthorized() {
   return currentUser;
 }
 
-export async function redirectIfNotAdmin() {
+export async function ensureAdmin(config = { redirect: false }) {
   const currentUser = await getCurrentUser();
-  if (!currentUser || currentUser.role !== "admin") {
-    const params = new URLSearchParams({ redirect_url: "/admin" });
-    const redirectUrl = `${REDIRECT_URL_IF_UNAUTHORIZED}?${params.toString()}`;
 
-    return redirect(redirectUrl);
+  if (!currentUser || currentUser.role !== "admin") {
+    if (config.redirect) {
+      const params = new URLSearchParams({ redirect_url: "/admin" });
+      const redirectUrl = `${REDIRECT_URL_IF_UNAUTHORIZED}?${params.toString()}`;
+      return redirect(redirectUrl);
+    }
+    throw new UnauthorizedError();
   }
 
   return currentUser;

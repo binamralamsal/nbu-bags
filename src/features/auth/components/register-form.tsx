@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
 
-import { registerUserAction } from "@/server/features/auth/auth.actions";
+import { registerUserAction } from "../server/auth.actions";
 
 export function RegisterForm() {
   const [registerName, setRegisterName] = useState("");

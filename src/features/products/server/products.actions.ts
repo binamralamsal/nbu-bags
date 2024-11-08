@@ -1,7 +1,6 @@
 "use server";
 
-import { UnauthorizedError } from "@/errors/unauthorized-error";
-import { getCurrentUser } from "@/features/auth/server/auth.query";
+import { ensureAdmin } from "@/features/auth/server/auth.query";
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -17,9 +16,7 @@ export async function addCategoryAction(body: NewCategorySchema) {
   if (error) return error;
 
   try {
-    const user = await getCurrentUser();
-    if (!user || user.role !== "admin") throw new UnauthorizedError();
-
+    await ensureAdmin();
     const category = await addCategoryDB(data);
 
     return successResponse("Created category successfully", category);
@@ -37,10 +34,9 @@ export async function updateCategoryAction(
   if (error) return error;
 
   try {
-    const user = await getCurrentUser();
-    if (!user || user.role !== "admin") throw new UnauthorizedError();
-
+    await ensureAdmin();
     await updateCategoryDB(id, data);
+
     return successResponse("Updated category successfully");
   } catch (err) {
     if (!(err instanceof Error)) return internalServerErrorResponse();
