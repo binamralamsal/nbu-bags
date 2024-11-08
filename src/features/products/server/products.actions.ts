@@ -1,21 +1,19 @@
 "use server";
 
-import { z } from "zod";
-
-import { UnauthorizedError } from "@/server/errors/unauthorized-error";
+import { UnauthorizedError } from "@/errors/unauthorized-error";
+import { getCurrentUser } from "@/features/auth/server/auth.query";
 import {
   errorResponse,
   internalServerErrorResponse,
-} from "@/server/utils/errors-response";
-import { successResponse } from "@/server/utils/success-response";
-import { validateData } from "@/server/utils/validate-data";
+} from "@/utils/errors-response";
+import { successResponse } from "@/utils/success-response";
+import { validateData } from "@/utils/validate-data";
 
-import { getCurrentUser } from "../auth/auth.query";
-import { newCategoryDTO } from "./products.dtos";
+import { NewCategorySchema, newCategorySchema } from "../products.schema";
 import { addCategoryDB, updateCategoryDB } from "./products.services";
 
-export async function addCategoryAction(body: z.infer<typeof newCategoryDTO>) {
-  const { data, error } = validateData(newCategoryDTO, body);
+export async function addCategoryAction(body: NewCategorySchema) {
+  const { data, error } = validateData(newCategorySchema, body);
   if (error) return error;
 
   try {
@@ -33,9 +31,9 @@ export async function addCategoryAction(body: z.infer<typeof newCategoryDTO>) {
 
 export async function updateCategoryAction(
   id: number,
-  body: z.infer<typeof newCategoryDTO>,
+  body: NewCategorySchema,
 ) {
-  const { data, error } = validateData(newCategoryDTO, body);
+  const { data, error } = validateData(newCategorySchema, body);
   if (error) return error;
 
   try {

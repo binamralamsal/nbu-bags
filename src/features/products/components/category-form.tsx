@@ -30,15 +30,17 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircleIcon } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 
-import { useFormDirtyState } from "@/hooks/use-form-dirty-state";
-import { slugify } from "@/libs/slugify";
+import {
+  NewCategorySchema,
+  newCategorySchema,
+} from "@/features/products/products.schema";
 import {
   addCategoryAction,
   updateCategoryAction,
-} from "@/server/features/products/products.actions";
-import { newCategoryDTO } from "@/server/features/products/products.dtos";
+} from "@/features/products/server/products.actions";
+import { useFormDirtyState } from "@/hooks/use-form-dirty-state";
+import { slugify } from "@/libs/slugify";
 
 function ActionButtons(props: { isEditing?: boolean }) {
   const {
@@ -59,10 +61,10 @@ function ActionButtons(props: { isEditing?: boolean }) {
 
 export function CategoryForm(props: {
   id?: number;
-  defaultValues?: z.infer<typeof newCategoryDTO>;
+  defaultValues?: NewCategorySchema;
 }) {
-  const form = useForm<z.infer<typeof newCategoryDTO>>({
-    resolver: zodResolver(newCategoryDTO),
+  const form = useForm<NewCategorySchema>({
+    resolver: zodResolver(newCategorySchema),
     defaultValues: props.defaultValues || {
       name: "",
       slug: "",
@@ -81,7 +83,7 @@ export function CategoryForm(props: {
     form.setValue("slug", slug);
   }, [nameValue, form]);
 
-  async function handleSaveCategory(values: z.infer<typeof newCategoryDTO>) {
+  async function handleSaveCategory(values: NewCategorySchema) {
     if (props.id) {
       const response = await updateCategoryAction(props.id, values);
 
@@ -162,7 +164,7 @@ export function CategoryForm(props: {
                 />
               </div>
             </CardContent>
-            <CardFooter className="xs:grid-cols-2 grid gap-2 md:hidden">
+            <CardFooter className="grid gap-2 xs:grid-cols-2 md:hidden">
               <ActionButtons isEditing={!!props.id} />
             </CardFooter>
           </Card>

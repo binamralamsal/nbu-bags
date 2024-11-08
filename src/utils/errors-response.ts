@@ -1,3 +1,5 @@
+import "server-only";
+
 import { STATUS } from "@/configs/constants";
 
 export function errorResponse(message: string) {

@@ -3,13 +3,13 @@ import argon2 from "argon2";
 import { DatabaseError } from "pg";
 import { z } from "zod";
 
+import {
+  emailSchema,
+  nameSchema,
+  newPasswordSchema,
+} from "@/features/auth/auth.schema";
 import { db } from "@/libs/drizzle";
 import { emailsTable, usersTable } from "@/libs/drizzle/schema";
-import {
-  emailDTO,
-  nameDTO,
-  newPasswordDTO,
-} from "@/server/features/auth/auth.dtos";
 
 const validate = (input: string, zodSchema: z.Schema) => {
   const parsed = zodSchema.safeParse(input);
@@ -20,17 +20,17 @@ const validate = (input: string, zodSchema: z.Schema) => {
 
 const nameInput = await input({
   message: "👤 What name should I assign to the new user?",
-  validate: (input) => validate(input, nameDTO),
+  validate: (input) => validate(input, nameSchema),
 });
 
 const emailInput = await input({
   message: "📧 What email address should I use for the user?",
-  validate: (input) => validate(input, emailDTO),
+  validate: (input) => validate(input, emailSchema),
 });
 
 const passwordInput = await password({
   message: "🔑 Please set a password for the user:",
-  validate: (input) => validate(input, newPasswordDTO),
+  validate: (input) => validate(input, newPasswordSchema),
 });
 
 const roleInput = await select({

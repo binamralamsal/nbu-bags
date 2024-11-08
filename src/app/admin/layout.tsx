@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-import { redirectIfNotAdmin } from "@/server/features/auth/auth.query";
+import { redirectIfNotAdmin } from "@/features/auth/server/auth.query";
 
 export const metadata: Metadata = {
   title: "Admin",

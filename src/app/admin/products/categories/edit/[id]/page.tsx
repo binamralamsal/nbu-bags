@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { CategoryForm } from "@/features/products/components/category-form";
-import { getCategory } from "@/server/features/products/products.query";
+import { getCategory } from "@/features/products/server/products.query";
 
 export default async function EditCategory({
   params,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const newCategoryDTO = z.object({
+export const newCategorySchema = z.object({
   name: z
     .string()
     .trim()
@@ -19,3 +19,4 @@ export const newCategoryDTO = z.object({
         "Slug can only contain lowercase letters, numbers, and hyphens. Spaces are not allowed.",
     }),
 });
+export type NewCategorySchema = z.infer<typeof newCategorySchema>;

@@ -1,5 +1,5 @@
+import { redirectIfNotAdmin } from "@/features/auth/server/auth.query";
 import { CategoryForm } from "@/features/products/components/category-form";
-import { redirectIfNotAdmin } from "@/server/features/auth/auth.query";
 
 export default async function AdminDashboardNewCategory() {
   await redirectIfNotAdmin();

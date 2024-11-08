@@ -18,7 +18,7 @@ import {
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
-import { logoutUserAction } from "@/server/features/auth/auth.actions";
+import { logoutUserAction } from "@/features/auth/server/auth.actions";
 
 export function NavUser({
   user,

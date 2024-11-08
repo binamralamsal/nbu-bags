@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 import { REFRESH_TOKEN_KEY } from "@/configs/constants";
-import { refreshTokens } from "@/server/features/auth/auth.services";
+import { refreshTokensDB } from "@/features/auth/server/auth.services";
 
 export async function POST() {
   const cookieStore = await cookies();
@@ -10,10 +10,8 @@ export async function POST() {
   if (!refreshToken) return new Response("Unauthorized", { status: 401 });
 
   try {
-    await refreshTokens(refreshToken.value);
-  } catch (err) {
-    console.log("asdf", err);
-  }
+    await refreshTokensDB(refreshToken.value);
+  } catch {}
 
   return new Response("Refreshed token successfully", { status: 200 });
 }

@@ -15,13 +15,13 @@ import {
   REFRESH_TOKEN_KEY,
 } from "@/configs/constants";
 import { env } from "@/configs/env";
+import { InternalServerError } from "@/errors/internal-server-error";
+import { UnauthorizedError } from "@/errors/unauthorized-error";
 import { db } from "@/libs/drizzle";
 import { emailsTable, sessionsTable, usersTable } from "@/libs/drizzle/schema";
-import { InternalServerError } from "@/server/errors/internal-server-error";
-import { UnauthorizedError } from "@/server/errors/unauthorized-error";
-import { getIP } from "@/server/utils/get-ip";
+import { getIP } from "@/utils/get-ip";
 
-import { accessTokenDTO, refreshTokenDTO } from "./auth.dtos";
+import { accessTokenSchema, refreshTokenSchema } from "../auth.schema";
 
 function hashPassword(password: string) {
   return argon2.hash(password);
@@ -31,7 +31,7 @@ export function verifyPassword(password: string, hashedPassword: string) {
   return argon2.verify(hashedPassword, password);
 }
 
-export async function registerUser(data: {
+export async function registerUserDB(data: {
   email: string;
   name: string;
   password: string;
@@ -64,7 +64,7 @@ export async function registerUser(data: {
   }
 }
 
-export async function createSession(
+export async function createSessionDB(
   userId: number,
   connection: { ip: string; userAgent: string },
 ) {
@@ -89,7 +89,7 @@ export async function logUserIn(data: {
   const ip = await getIP();
   const userAgent = (await headers()).get("user-agent");
 
-  const { sessionToken } = await createSession(data.userId, {
+  const { sessionToken } = await createSessionDB(data.userId, {
     ip,
     userAgent: userAgent || "",
   });
@@ -128,7 +128,10 @@ export function createRefreshToken(sessionToken: string) {
   );
 }
 
-export async function authorizeUser(data: { email: string; password: string }) {
+export async function authorizeUserDB(data: {
+  email: string;
+  password: string;
+}) {
   const [user] = await db
     .select({
       userId: usersTable.id,
@@ -157,7 +160,7 @@ export async function authorizeUser(data: { email: string; password: string }) {
 export function getUserFromAccessToken(accessToken: string) {
   try {
     const decodedAccessToken = jwt.verify(accessToken, env.JWT_SECRET);
-    const validatedAccessToken = accessTokenDTO.parse(decodedAccessToken);
+    const validatedAccessToken = accessTokenSchema.parse(decodedAccessToken);
 
     return validatedAccessToken;
   } catch {
@@ -165,13 +168,13 @@ export function getUserFromAccessToken(accessToken: string) {
   }
 }
 
-export function findSessionById(sessionToken: string) {
+export function findSessionByIdDB(sessionToken: string) {
   return db.query.sessionsTable.findFirst({
     where: eq(sessionsTable.sessionToken, sessionToken),
   });
 }
 
-export async function findUserById(userId: number) {
+export async function findUserByIdDB(userId: number) {
   const [currentUser] = await db
     .select({
       id: usersTable.id,
@@ -187,10 +190,10 @@ export async function findUserById(userId: number) {
   return currentUser;
 }
 
-export async function refreshTokens(refreshToken: string) {
+export async function refreshTokensDB(refreshToken: string) {
   try {
     const decodedRefreshToken = jwt.verify(refreshToken, env.JWT_SECRET);
-    const validatedRefreshToken = refreshTokenDTO.parse(decodedRefreshToken);
+    const validatedRefreshToken = refreshTokenSchema.parse(decodedRefreshToken);
 
     const [user] = await db
       .select({
@@ -234,10 +237,10 @@ export async function refreshTokens(refreshToken: string) {
   }
 }
 
-export async function logoutUser(rawRefreshToken: string) {
+export async function logoutUserDB(rawRefreshToken: string) {
   try {
     const refreshTokenJwt = jwt.verify(rawRefreshToken, env.JWT_SECRET);
-    const validatedRefreshToken = refreshTokenDTO.parse(refreshTokenJwt);
+    const validatedRefreshToken = refreshTokenSchema.parse(refreshTokenJwt);
 
     await db
       .delete(sessionsTable)

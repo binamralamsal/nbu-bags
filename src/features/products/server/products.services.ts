@@ -2,15 +2,14 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { DatabaseError } from "pg";
-import { z } from "zod";
 
+import { InternalServerError } from "@/errors/internal-server-error";
 import { db } from "@/libs/drizzle";
 import { categoriesTable } from "@/libs/drizzle/schema";
-import { InternalServerError } from "@/server/errors/internal-server-error";
 
-import { newCategoryDTO } from "./products.dtos";
+import { NewCategorySchema } from "../products.schema";
 
-export async function addCategoryDB(data: z.infer<typeof newCategoryDTO>) {
+export async function addCategoryDB(data: NewCategorySchema) {
   try {
     const [category] = await db
       .insert(categoriesTable)
@@ -32,10 +31,7 @@ export async function addCategoryDB(data: z.infer<typeof newCategoryDTO>) {
   }
 }
 
-export async function updateCategoryDB(
-  id: number,
-  data: z.infer<typeof newCategoryDTO>,
-) {
+export async function updateCategoryDB(id: number, data: NewCategorySchema) {
   try {
     await db
       .update(categoriesTable)

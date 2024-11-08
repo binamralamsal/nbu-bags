@@ -1,3 +1,5 @@
+import "server-only";
+
 import { ZodError, z } from "zod";
 
 import { STATUS } from "@/configs/constants";

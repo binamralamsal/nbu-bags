@@ -2,33 +2,34 @@
 
 import { cookies } from "next/headers";
 
-import { z } from "zod";
-
 import { REFRESH_TOKEN_KEY } from "@/configs/constants";
-import { UnauthorizedError } from "@/server/errors/unauthorized-error";
+import { UnauthorizedError } from "@/errors/unauthorized-error";
 import {
   errorResponse,
   internalServerErrorResponse,
-} from "@/server/utils/errors-response";
-import { successResponse } from "@/server/utils/success-response";
-import { validateData } from "@/server/utils/validate-data";
+} from "@/utils/errors-response";
+import { successResponse } from "@/utils/success-response";
+import { validateData } from "@/utils/validate-data";
 
-import { authorizeUserDTO, registerUserDTO } from "./auth.dtos";
 import {
-  authorizeUser,
+  AuthorizeUserSchema,
+  RegisterUserSchema,
+  authorizeUserSchema,
+  registerUserSchema,
+} from "../auth.schema";
+import {
+  authorizeUserDB,
   logUserIn,
-  logoutUser,
-  registerUser,
+  logoutUserDB,
+  registerUserDB,
 } from "./auth.services";
 
-export async function registerUserAction(
-  body: z.infer<typeof registerUserDTO>,
-) {
-  const { data, error } = validateData(registerUserDTO, body);
+export async function registerUserAction(body: RegisterUserSchema) {
+  const { data, error } = validateData(registerUserSchema, body);
   if (error) return error;
 
   try {
-    const userResponse = await registerUser(data);
+    const userResponse = await registerUserDB(data);
     await logUserIn(userResponse);
 
     return successResponse("User registered successfully", userResponse);
@@ -38,17 +39,16 @@ export async function registerUserAction(
   }
 }
 
-export async function loginUserAction(body: z.infer<typeof authorizeUserDTO>) {
-  const { data, error } = validateData(authorizeUserDTO, body);
+export async function loginUserAction(body: AuthorizeUserSchema) {
+  const { data, error } = validateData(authorizeUserSchema, body);
   if (error) return error;
 
   try {
-    const userResponse = await authorizeUser(data);
+    const userResponse = await authorizeUserDB(data);
     await logUserIn(userResponse);
 
     return successResponse("Logged in successfully", userResponse);
   } catch (err) {
-    console.log(err);
     if (!(err instanceof Error)) return internalServerErrorResponse();
     return errorResponse(err.message);
   }
@@ -64,7 +64,7 @@ export async function logoutUserAction() {
       throw new UnauthorizedError();
     }
 
-    await logoutUser(refreshToken.value);
+    await logoutUserDB(refreshToken.value);
 
     return successResponse("Logged out successfully");
   } catch (err) {
