@@ -54,7 +54,7 @@ export async function AdminSidebar({
   const currentUser = await redirectIfUnauthorized();
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar collapsible="icon" variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

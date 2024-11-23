@@ -15,6 +15,13 @@
       "when": 1730971779929,
       "tag": "0001_reflective_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732276263175,
+      "tag": "0002_pale_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }

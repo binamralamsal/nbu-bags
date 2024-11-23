@@ -9,7 +9,11 @@ import { successResponse } from "@/utils/success-response";
 import { validateData } from "@/utils/validate-data";
 
 import { NewCategorySchema, newCategorySchema } from "../products.schema";
-import { addCategoryDB, updateCategoryDB } from "./products.services";
+import {
+  addCategoryDB,
+  deleteCategoryDB,
+  updateCategoryDB,
+} from "./products.services";
 
 export async function addCategoryAction(body: NewCategorySchema) {
   const { data, error } = validateData(newCategorySchema, body);
@@ -38,6 +42,18 @@ export async function updateCategoryAction(
     await updateCategoryDB(id, data);
 
     return successResponse("Updated category successfully");
+  } catch (err) {
+    if (!(err instanceof Error)) return internalServerErrorResponse();
+    return errorResponse(err.message);
+  }
+}
+
+export async function deleteCategoryAction(id: number) {
+  try {
+    await ensureAdmin();
+    await deleteCategoryDB(id);
+
+    return successResponse("Deleted category successfully");
   } catch (err) {
     if (!(err instanceof Error)) return internalServerErrorResponse();
     return errorResponse(err.message);

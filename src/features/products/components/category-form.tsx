@@ -99,7 +99,7 @@ export function CategoryForm(props: {
       if (response.status === "SUCCESS") {
         toast.success(response.message);
         setDirtyState(false);
-        router.push(`/admin/products/categories/edit/${response.data.id}`);
+        router.push(`/admin/products/categories`);
       } else {
         toast.error(response.message);
       }

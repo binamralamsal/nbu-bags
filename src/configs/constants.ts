@@ -37,3 +37,5 @@ export const REDIRECT_URL_IF_UNAUTHORIZED = "/login";
 
 export const roles = ["user", "admin"] as const;
 export const defaultRole: (typeof roles)[number] = "user";
+
+export const DATATABLE_PAGE_SIZE = 15;

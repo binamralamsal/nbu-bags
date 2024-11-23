@@ -70,7 +70,13 @@ export const categoriesTable = pgTable("categories", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
 });
+export type CategoriesTableSelectType = typeof categoriesTable.$inferSelect;
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
   email: one(emailsTable, {
