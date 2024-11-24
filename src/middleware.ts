@@ -44,5 +44,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/((?!api|static|.*\\..*|_next).*)",
+  matcher: "/((?!api/refresh-token|static|.*\\..*|_next).*)",
 };

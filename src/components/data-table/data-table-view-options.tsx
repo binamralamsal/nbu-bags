@@ -49,11 +49,17 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {toHumanReadableLabel(column.id)}
               </DropdownMenuCheckboxItem>
             );
           })}
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+function toHumanReadableLabel(key: string): string {
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add a space before uppercase letters
+    .replace(/^\w/, (char) => char.toUpperCase()); // Capitalize the first letter
 }
