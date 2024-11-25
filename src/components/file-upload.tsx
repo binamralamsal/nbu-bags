@@ -46,7 +46,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { AcceptEntry } from "@/types";
 import { cn } from "@/utils/cn";
+import { getHumanReadableFileTypes } from "@/utils/get-human-readable-file-types";
+import { isValidFileType } from "@/utils/is-valid-file-type";
 
 type UploadingFile = {
   file: File;
@@ -66,6 +69,7 @@ type FileUploadProps = {
   maxFilesCount?: number;
   initialFiles?: UploadedFile[];
   maxFileSize?: FileSize;
+  accept?: AcceptEntry[];
 };
 
 type FileSize = `${number}${"mb" | "gb"}`;
@@ -76,6 +80,7 @@ export function FileUpload(props: FileUploadProps) {
     initialFiles = [],
     maxFilesCount,
     maxFileSize,
+    accept,
   } = props;
 
   if (!multiple && maxFilesCount !== undefined) {
@@ -88,6 +93,19 @@ export function FileUpload(props: FileUploadProps) {
     useState<UploadedFile[]>(initialFiles);
 
   const hasFiles = files.length > 0 || uploadedFiles.length > 0;
+
+  const humanReadableFileTypes = accept
+    ? getHumanReadableFileTypes(accept)
+    : [];
+
+  const wildcardTypes = ["images", "videos", "audios"];
+
+  const fileTypesBeVerb =
+    humanReadableFileTypes.length === 1
+      ? wildcardTypes.includes(humanReadableFileTypes[0])
+        ? "are"
+        : "is"
+      : "is";
 
   function handleDragOver(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
@@ -154,6 +172,24 @@ export function FileUpload(props: FileUploadProps) {
         fileObjects = filteredFileObjects;
         toast.error(
           `${omittedFilesCount} file${omittedFilesCount === 1 ? "" : "s"} have been omitted because they were found to have more than ${formatFileSize(maxFileSize)}`,
+        );
+      }
+    }
+
+    if (accept) {
+      const filteredFileObjects = fileObjects.filter(({ file }) =>
+        isValidFileType(file.type, accept),
+      );
+      if (filteredFileObjects.length === 0)
+        return toast.error(
+          `Only ${humanReadableFileTypes.join("; ")} ${fileTypesBeVerb} allowed!`,
+        );
+      else if (filteredFileObjects.length !== fileObjects.length) {
+        const omittedFilesCount =
+          fileObjects.length - filteredFileObjects.length;
+        fileObjects = filteredFileObjects;
+        toast.error(
+          `${omittedFilesCount} file${omittedFilesCount === 1 ? "" : "s"} have been omitted because they were found to be of different type other than ${humanReadableFileTypes.join("; ")}`,
         );
       }
     }
@@ -299,20 +335,29 @@ export function FileUpload(props: FileUploadProps) {
             </div>
 
             <p className="mt-2 text-sm font-semibold text-gray-600">
-              Drag files
+              Drag file{multiple ? "s" : ""}
             </p>
-            <p className="text-xs text-gray-500">
-              Click to upload files{" "}
+            <p className="mx-auto mt-2 max-w-[75%] text-xs text-gray-500">
+              Click to upload {maxFilesCount ? `upto ${maxFilesCount}` : ""}{" "}
+              file
+              {multiple ? "s " : " "}
               {maxFileSize
                 ? `(files should be under ${formatFileSize(maxFileSize)})`
                 : null}
             </p>
+            {accept ? (
+              <p className="mt-1 text-xs text-gray-500">
+                Only {humanReadableFileTypes.join("; ")} {fileTypesBeVerb}{" "}
+                allowed.
+              </p>
+            ) : null}
           </div>
           <input
             type="file"
             className="hidden"
             multiple={multiple}
             onChange={handleFilesSelect}
+            accept={accept?.join(",")}
           />
         </label>
       )}
@@ -569,7 +614,7 @@ function formatFileSize(fileSize: string) {
   if (match) {
     const number = match[1];
     const unit = match[3].toUpperCase();
-    return `${number} ${unit}`; // Format as "2 MB" or "3.5 GB"
+    return `${number} ${unit}`;
   }
 
   throw new Error("Invalid file size format");

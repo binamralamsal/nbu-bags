@@ -121,7 +121,11 @@ export default async function AdminDashboardNewProduct() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FileUpload maxFilesCount={5} maxFileSize="2mb" />
+                <FileUpload
+                  accept={["image/*"]}
+                  maxFileSize="100mb"
+                  maxFilesCount={5}
+                />
               </CardContent>
             </Card>
           </div>
