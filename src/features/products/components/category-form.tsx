@@ -35,10 +35,7 @@ import {
   NewCategorySchema,
   newCategorySchema,
 } from "@/features/products/products.schema";
-import {
-  addCategoryAction,
-  updateCategoryAction,
-} from "@/features/products/server/products.actions";
+import { saveCategoryAction } from "@/features/products/server/products.actions";
 import { useFormDirtyState } from "@/hooks/use-form-dirty-state";
 import { slugify } from "@/libs/slugify";
 
@@ -72,7 +69,10 @@ export function CategoryForm(props: {
     mode: "onBlur",
   });
 
-  const { setDirtyState } = useFormDirtyState(form);
+  useFormDirtyState(
+    form.formState.isDirty && !form.formState.isSubmitSuccessful,
+  );
+
   const router = useRouter();
 
   const nameValue = useWatch({ control: form.control, name: "name" });
@@ -84,25 +84,13 @@ export function CategoryForm(props: {
   }, [nameValue, form]);
 
   async function handleSaveCategory(values: NewCategorySchema) {
-    if (props.id) {
-      const response = await updateCategoryAction(props.id, values);
+    const response = await saveCategoryAction(values, props.id);
 
-      if (response.status === "SUCCESS") {
-        toast.success(response.message);
-        setDirtyState(false);
-      } else {
-        toast.error(response.message);
-      }
+    if (response.status === "SUCCESS") {
+      toast.success(response.message);
+      if (!props.id) router.push(`/admin/products/categories`);
     } else {
-      const response = await addCategoryAction(values);
-
-      if (response.status === "SUCCESS") {
-        toast.success(response.message);
-        setDirtyState(false);
-        router.push(`/admin/products/categories`);
-      } else {
-        toast.error(response.message);
-      }
+      toast.error(response.message);
     }
   }
 
@@ -121,7 +109,7 @@ export function CategoryForm(props: {
           pageTitle={pageTitle}
           rightSideContent={<ActionButtons isEditing={!!props.id} />}
         >
-          <Card x-chunk="dashboard-07-chunk-0">
+          <Card>
             <CardHeader>
               <CardTitle>{pageTitle}</CardTitle>
               <CardDescription>
@@ -153,10 +141,10 @@ export function CategoryForm(props: {
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input placeholder="Fashion" {...field} />
+                        <Input placeholder="fashion" {...field} />
                       </FormControl>
                       <FormDescription>
-                        This will be used in URL of the product.
+                        This will be used in URL of the category.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

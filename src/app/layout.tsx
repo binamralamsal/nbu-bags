@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
+import "./globals.css";
+
 import { Toaster } from "@/components/ui/sonner";
 
 import { site } from "@/configs/site";
-
-import "./globals.css";
+import { ConfirmProvider } from "@/stores/confirm-alert";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextTopLoader />
-        {children}
+        <ConfirmProvider>{children}</ConfirmProvider>
         <Toaster />
       </body>
     </html>

@@ -5,6 +5,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { deleteProductAction } from "../server/products.actions";
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import {
   AlertDialog,
@@ -16,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,18 +39,18 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteCategoryAction } from "@/features/products/server/products.actions";
-
-export type Category = {
+export type Product = {
   id: number;
   name: string;
+  status: string;
   slug: string;
+  category: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
-export type CategoriesAllowedKeys = keyof Category;
+export type ProductsAllowedKeys = keyof Product;
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -65,6 +68,22 @@ export const columns: ColumnDef<Category>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Slug" />
     ),
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => (
+      <Badge className="capitalize">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "category",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Category" />
+    ),
+    cell: ({ row }) => row.original.category || "None",
   },
   {
     accessorKey: "createdAt",
@@ -105,14 +124,14 @@ export const columns: ColumnDef<Category>[] = [
   {
     id: "actions",
     cell: function CellComponent({ row }) {
-      const category = row.original;
+      const product = row.original;
 
       const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
       const [actionsDropdownOpened, setActionsDropdownOpened] = useState(false);
       const router = useRouter();
 
       async function handleDeleteCategory() {
-        const response = await deleteCategoryAction(row.original.id);
+        const response = await deleteProductAction(row.original.id);
 
         if (response.status === "SUCCESS") {
           toast.success(response.message);
@@ -139,9 +158,7 @@ export const columns: ColumnDef<Category>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/admin/products/categories/edit/${category.id}`}>
-                Edit
-              </Link>
+              <Link href={`/admin/products/edit/${product.id}`}>Edit</Link>
             </DropdownMenuItem>
             <AlertDialog
               open={deleteDialogOpened}

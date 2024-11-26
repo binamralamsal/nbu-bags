@@ -1,34 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { FieldValues, UseFormReturn } from "react-hook-form";
+import { useEffect } from "react";
 
-export function useFormDirtyState<T extends FieldValues>(
-  form: UseFormReturn<T>,
-) {
-  const [isFormEdited, setIsFormEdited] = useState(false);
+import nProgress from "nprogress";
 
-  const defaultValuesRef = useRef(form.getValues());
-
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      const isDirty = Object.keys(values).some(
-        (key) => values[key] !== defaultValuesRef.current[key],
-      );
-      setIsFormEdited(isDirty);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [form]);
-
+export function useFormDirtyState(condition: boolean) {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (isFormEdited) {
+      if (condition) {
         event.preventDefault();
-        const message =
-          "You have unsaved changes. Are you sure you want to leave?";
-        event.returnValue = message;
-        return message;
+
+        nProgress.done();
+        return true;
       }
     };
 
@@ -37,16 +18,5 @@ export function useFormDirtyState<T extends FieldValues>(
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [isFormEdited]);
-
-  return {
-    isFormEdited,
-    resetForm: () => {
-      form.reset(defaultValuesRef.current);
-      setIsFormEdited(false);
-    },
-    setDirtyState: (state: boolean) => {
-      setIsFormEdited(state);
-    },
-  };
+  }, [condition]);
 }

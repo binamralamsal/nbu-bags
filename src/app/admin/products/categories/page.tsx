@@ -20,10 +20,11 @@ import { z } from "zod";
 import { DATATABLE_PAGE_SIZE } from "@/configs/constants";
 import { ensureAdmin } from "@/features/auth/server/auth.query";
 import {
-  AllowedKeys,
+  CategoriesAllowedKeys,
   columns,
 } from "@/features/products/components/categories-columns";
 import { getAllCategories } from "@/features/products/server/products.query";
+import { zodTransformSortSearchParams } from "@/utils/zod-transform-sort-search-params";
 
 export default async function AdminDashboardCategories({
   searchParams: rawSearchParams,
@@ -91,7 +92,7 @@ async function CategoriesTable({
   );
 }
 
-const allowedKeys: AllowedKeys[] = [
+const allowedKeys: CategoriesAllowedKeys[] = [
   "id",
   "name",
   "slug",
@@ -112,23 +113,6 @@ const searchParamsSchema = z.object({
     .string()
     .optional()
     .default("createdAt.desc;")
-    .transform((sort) => {
-      if (!sort) return undefined;
-
-      const result = {} as Partial<Record<AllowedKeys, "asc" | "desc">>;
-
-      const sortParts = sort.split(";").filter(Boolean);
-
-      sortParts.forEach((part) => {
-        const [key, value] = part.split(".");
-
-        if (allowedKeys.includes(key as AllowedKeys)) {
-          if (value === "desc") result[key as AllowedKeys] = "desc";
-          else if (value === "asc") result[key as AllowedKeys] = "asc";
-        }
-      });
-
-      return result;
-    })
+    .transform(zodTransformSortSearchParams(allowedKeys))
     .catch({ createdAt: "desc" }),
 });

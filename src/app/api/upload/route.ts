@@ -2,11 +2,12 @@ import crypto from "crypto";
 import fs from "fs";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
-import { z } from "zod";
 
 import { STATUS } from "@/configs/constants";
 import { UnauthorizedError } from "@/errors/unauthorized-error";
 import { ensureAdmin } from "@/features/auth/server/auth.query";
+import { db } from "@/libs/drizzle";
+import { uploadedFilesTable } from "@/libs/drizzle/schema";
 
 async function readableStreamToAsyncIterable(
   stream: ReadableStream<Uint8Array>,
@@ -66,14 +67,20 @@ export async function POST(request: Request) {
 
     await pipeline(nodeStream, fileStream);
 
+    const [values] = await db
+      .insert(uploadedFilesTable)
+      .values({
+        name: fileName,
+        fileType: file.type,
+        url: fileURL,
+      })
+      .returning();
+
     return Response.json(
       {
         message: "File Uploaded successfully.",
-        fileURL,
-        filePath: uploadedFilePath,
-        fileType: file.type,
-        fileName,
         status: STATUS.SUCCESS,
+        details: values,
       },
       { status: 200 },
     );
@@ -89,56 +96,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
-export async function DELETE(request: Request) {
-  try {
-    await ensureAdmin();
-  } catch (err) {
-    if (err instanceof UnauthorizedError)
-      return Response.json(
-        {
-          message: `You must have administrative rights to upload files.`,
-          status: STATUS.ERROR,
-        },
-        { status: 422 },
-      );
-
-    return Response.json(
-      {
-        message: "Internal server error occured",
-        status: STATUS.ERROR,
-      },
-      { status: 500 },
-    );
-  }
-
-  const rawBody = await request.json();
-  const { data: body, error } = deleteFileBodySchema.safeParse(rawBody);
-  if (error)
-    return Response.json(
-      { message: error.issues[0].message, status: STATUS.VALIDATION_ERROR },
-      { status: 401 },
-    );
-
-  try {
-    await fs.promises.unlink(body.url);
-  } catch {}
-
-  return Response.json(
-    {
-      message: "File deleted successfully.",
-      status: STATUS.SUCCESS,
-    },
-    { status: 200 },
-  );
-}
-
-const deleteFileBodySchema = z.object({
-  url: z
-    .string()
-    .trim()
-    .startsWith("/api/public/uploads/")
-    .transform((url) => {
-      return url.replace(/^\/api/, ".");
-    }),
-});

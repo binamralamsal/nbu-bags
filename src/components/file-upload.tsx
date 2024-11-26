@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, DragEvent, ReactNode, useState } from "react";
+import { ChangeEvent, DragEvent, ReactNode, useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -45,7 +45,10 @@ import {
   XIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
 
+import { useCallbackRef } from "@/hooks/use-callback-ref";
+import { useConfirm } from "@/stores/confirm-alert";
 import { AcceptEntry } from "@/types";
 import { cn } from "@/utils/cn";
 import { getHumanReadableFileTypes } from "@/utils/get-human-readable-file-types";
@@ -58,7 +61,8 @@ type UploadingFile = {
   cancelToken?: AbortController;
 };
 
-type UploadedFile = {
+export type UploadedFile = {
+  id: number;
   name: string;
   url: string;
   fileType: string;
@@ -70,9 +74,20 @@ type FileUploadProps = {
   initialFiles?: UploadedFile[];
   maxFileSize?: FileSize;
   accept?: AcceptEntry[];
+  onChange?: (files: UploadedFile[]) => void;
 };
 
 type FileSize = `${number}${"mb" | "gb"}`;
+
+const uploadFileSuccessResponseSchema = z.object({
+  message: z.string(),
+  details: z.object({
+    url: z.string(),
+    name: z.string(),
+    fileType: z.string(),
+    id: z.number(),
+  }),
+});
 
 export function FileUpload(props: FileUploadProps) {
   const {
@@ -81,7 +96,10 @@ export function FileUpload(props: FileUploadProps) {
     maxFilesCount,
     maxFileSize,
     accept,
+    onChange,
   } = props;
+
+  const handleChange = useCallbackRef(onChange);
 
   if (!multiple && maxFilesCount !== undefined) {
     throw new Error("maxFilesCount cannot be set when multiple is false");
@@ -91,6 +109,13 @@ export function FileUpload(props: FileUploadProps) {
   const [files, setFiles] = useState<UploadingFile[]>([]);
   const [uploadedFiles, setUploadedFiles] =
     useState<UploadedFile[]>(initialFiles);
+  const confirm = useConfirm();
+
+  useEffect(() => {
+    if (handleChange) {
+      handleChange(uploadedFiles);
+    }
+  }, [uploadedFiles, handleChange]);
 
   const hasFiles = files.length > 0 || uploadedFiles.length > 0;
 
@@ -196,7 +221,7 @@ export function FileUpload(props: FileUploadProps) {
 
     setFiles((prev) => [...prev, ...fileObjects]);
 
-    const uploadPromises = fileObjects.map(async ({ file }, index) => {
+    const uploadPromises = fileObjects.map(async ({ file }) => {
       const formData = new FormData();
       formData.append("file", file);
 
@@ -222,12 +247,18 @@ export function FileUpload(props: FileUploadProps) {
           signal: cancelToken.signal,
         })
         .then((response) => {
+          const { data, error } = uploadFileSuccessResponseSchema.safeParse(
+            response.data,
+          );
+          if (error) throw new Error();
+
           setUploadedFiles((prev) => [
             ...prev,
             {
-              name: response.data.fileName || `Unknown File ${index + 1}`,
-              url: response.data.fileURL || "Invalid URL",
-              fileType: response.data.fileType || "Invalid Type",
+              id: data.details.id,
+              name: data.details.name,
+              url: data.details.url,
+              fileType: data.details.fileType,
             },
           ]);
         })
@@ -282,28 +313,24 @@ export function FileUpload(props: FileUploadProps) {
 
     fileToCancel?.cancelToken?.abort();
     setFiles((prev) => prev.filter((f) => f.file !== file));
-    toast.success(`Cancelled uploading for '${fileToCancel.file.name}'`);
+    // toast.success(`Cancelled uploading for '${fileToCancel.file.name}'`);
   }
 
   async function deleteFile(url: string) {
-    try {
-      const fileToDelete = uploadedFiles.find((file) => file.url === url);
-      if (!fileToDelete) return;
+    const fileToDelete = uploadedFiles.find((file) => file.url === url);
+    if (!fileToDelete) return;
 
-      await axios.delete("/api/upload", { data: { url } });
-      setUploadedFiles((prevFiles) =>
-        prevFiles.filter((file) => file.url !== url),
-      );
-      toast.success(`Deleted '${fileToDelete.name}' file`);
-    } catch (err) {
-      let errorMessage = "Unknown error occured!";
+    const choice = await confirm({
+      title: `Delete ${fileToDelete.name}`,
+      description: "Are you sure you want to delete this file?",
+    });
 
-      if (axios.isAxiosError(err)) {
-        errorMessage = err.response?.data?.message || err.message;
-      }
+    if (!choice) return;
 
-      toast.error(errorMessage);
-    }
+    setUploadedFiles((prevFiles) =>
+      prevFiles.filter((file) => file.url !== url),
+    );
+    // toast.success(`Deleted '${fileToDelete.name}' file`);
   }
 
   const isUploadAllowed = multiple
@@ -344,13 +371,10 @@ export function FileUpload(props: FileUploadProps) {
               {maxFileSize
                 ? `(files should be under ${formatFileSize(maxFileSize)})`
                 : null}
+              {accept
+                ? ` Only ${humanReadableFileTypes.join("; ")} ${fileTypesBeVerb} allowed.`
+                : null}
             </p>
-            {accept ? (
-              <p className="mt-1 text-xs text-gray-500">
-                Only {humanReadableFileTypes.join("; ")} {fileTypesBeVerb}{" "}
-                allowed.
-              </p>
-            ) : null}
           </div>
           <input
             type="file"
@@ -379,6 +403,7 @@ export function FileUpload(props: FileUploadProps) {
                   onClick={() => cancelUpload(file)}
                   size="icon"
                   variant="destructive"
+                  type="button"
                 >
                   <XIcon />
                 </Button>
@@ -401,6 +426,7 @@ export function FileUpload(props: FileUploadProps) {
                   onClick={() => deleteFile(url)}
                   size="icon"
                   variant="destructive"
+                  type="button"
                 >
                   <TrashIcon />
                 </Button>
@@ -492,7 +518,10 @@ function FilePreviewWithIcon({
         <Tooltip>
           <DialogTrigger asChild>
             <TooltipTrigger asChild>
-              <button className="group relative flex w-full items-center justify-center">
+              <button
+                className="group relative flex w-full items-center justify-center"
+                type="button"
+              >
                 {mediaContent}
                 <EyeIcon className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white p-1 text-black opacity-0 transition group-hover:opacity-100" />
               </button>
