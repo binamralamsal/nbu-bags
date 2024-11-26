@@ -2,6 +2,13 @@ import { ComponentProps } from "react";
 
 import Link from "next/link";
 
+import { NavUser } from "./admin-nav-user";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
+
 import {
   Sidebar,
   SidebarContent,
@@ -17,17 +24,16 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import { ChevronRightIcon, CommandIcon, ShoppingCartIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  CommandIcon,
+  FileIcon,
+  ShoppingCartIcon,
+  UsersIcon,
+} from "lucide-react";
 
 import { site } from "@/configs/site";
 import { redirectIfUnauthorized } from "@/features/auth/server/auth.query";
-
-import { NavUser } from "./admin-nav-user";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
 
 const nav = [
   {
@@ -37,12 +43,33 @@ const nav = [
     icon: ShoppingCartIcon,
     items: [
       {
-        title: "Add New",
+        title: "Add new product",
         url: "/admin/products/new",
       },
       {
         title: "Categories",
         url: "/admin/products/categories",
+      },
+      {
+        title: "Add new category",
+        url: "/admin/products/categories/new",
+      },
+    ],
+  },
+  {
+    title: "Media",
+    url: "/admin/media",
+    icon: FileIcon,
+  },
+  {
+    title: "Users",
+    url: "/admin/users",
+    icon: UsersIcon,
+    isActive: true,
+    items: [
+      {
+        title: "Add New",
+        url: "/admin/users/new",
       },
     ],
   },
