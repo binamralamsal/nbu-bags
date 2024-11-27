@@ -78,9 +78,12 @@ export function ProductForm(props: {
       description: "",
       images: [],
       status: "draft",
+      price: undefined,
     },
-    mode: "onBlur",
+    mode: "all",
   });
+
+  console.log(form.getValues());
 
   useFormDirtyState(
     form.formState.isDirty && !form.formState.isSubmitSuccessful,
@@ -136,7 +139,9 @@ export function ProductForm(props: {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>
+                              Name <span className="text-destructive">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input placeholder="Fashionable Bag" {...field} />
                             </FormControl>
@@ -152,7 +157,9 @@ export function ProductForm(props: {
                         name="slug"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Slug</FormLabel>
+                            <FormLabel>
+                              Slug <span className="text-destructive">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="fashionable-flag"
@@ -168,10 +175,36 @@ export function ProductForm(props: {
                       />
                       <FormField
                         control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Price <span className="text-destructive">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Rs. 1000"
+                                type="number"
+                                value={String(field.value)}
+                                onChange={(event) =>
+                                  field.onChange(Number(event.target.value))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
                         name="description"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>
+                              Description{" "}
+                              <span className="text-destructive">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Textarea
                                 placeholder="This bag is equipped of ..."

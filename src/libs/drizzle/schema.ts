@@ -89,6 +89,7 @@ export const productStatusEnum = pgEnum("product_status", productStatus);
 export const productsTable = pgTable("products", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
+  price: integer("price").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
   status: productStatusEnum().default(defaultProductStatus).notNull(),

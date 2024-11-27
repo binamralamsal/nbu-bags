@@ -2,7 +2,7 @@ import "server-only";
 
 import { NewCategorySchema, NewProductSchema } from "../products.schema";
 
-import { asc, count, desc, eq, ilike } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { DatabaseError } from "pg";
 
 import { InternalServerError } from "@/errors/internal-server-error";
@@ -12,7 +12,9 @@ import {
   ProductsTableSelectType,
   categoriesTable,
   productFilesTable,
+  productStatusEnum,
   productsTable,
+  uploadedFilesTable,
 } from "@/libs/drizzle/schema";
 
 export async function addCategoryDB(data: NewCategorySchema) {
@@ -111,6 +113,7 @@ export async function addProductDB(data: NewProductSchema) {
       const [newProduct] = await trx
         .insert(productsTable)
         .values({
+          price: data.price,
           slug: data.slug,
           status: data.status,
           name: data.name,
@@ -127,12 +130,14 @@ export async function addProductDB(data: NewProductSchema) {
       if (productFilesData.length > 0)
         await trx.insert(productFilesTable).values(productFilesData);
     });
-  } catch {
-    // if (err instanceof DatabaseError && err.code === "23505") {
-    //   throw new Error(
-    //     "Category with that slug already exists. Please change it to something else",
-    //   );
-    // }
+  } catch (err) {
+    if (err instanceof DatabaseError && err.code === "23505") {
+      throw new Error(
+        "Product with that slug already exists. Please change it to something else",
+      );
+    }
+
+    console.error(err);
 
     throw new InternalServerError();
   }
@@ -148,6 +153,8 @@ export async function updateProductDB(id: number, data: NewProductSchema) {
           name: data.name,
           description: data.description,
           categoryId: data.categoryId,
+          slug: data.slug,
+          price: data.price,
         })
         .where(eq(productsTable.id, id));
 
@@ -169,34 +176,55 @@ export async function updateProductDB(id: number, data: NewProductSchema) {
   }
 }
 
+type Image = {
+  id: number;
+  name: string;
+  url: string;
+  fileType: string;
+  uploadedAt: string;
+};
+
 export async function getProductDB(id: number) {
-  const product = await db.query.productsTable.findFirst({
-    where: eq(productsTable.id, id),
-    with: {
-      productsToFiles: {
-        with: {
-          file: true,
-        },
+  const [product] = await db
+    .select({
+      id: productsTable.id,
+      name: productsTable.name,
+      price: productsTable.price,
+      slug: productsTable.slug,
+      status: productsTable.status,
+      description: productsTable.description,
+      category: {
+        name: categoriesTable.name,
+        id: categoriesTable.id,
       },
-    },
-  });
+      createdAt: productsTable.createdAt,
+      updatedAt: productsTable.updatedAt,
+      images: sql<Image[]>`COALESCE(
+      JSON_AGG(
+        JSON_BUILD_OBJECT(
+          'id', ${uploadedFilesTable.id},
+          'name', ${uploadedFilesTable.name},
+          'url', ${uploadedFilesTable.url},
+          'fileType', ${uploadedFilesTable.fileType},
+          'uploadedAt', ${uploadedFilesTable.uploadedAt}
+        )
+      ) FILTER (WHERE ${uploadedFilesTable.id} IS NOT NULL), '[]'
+    )`,
+    })
+    .from(productsTable)
+    .where(eq(productsTable.id, id))
+    .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id))
+    .leftJoin(
+      productFilesTable,
+      eq(productsTable.id, productFilesTable.productId),
+    )
+    .leftJoin(
+      uploadedFilesTable,
+      eq(uploadedFilesTable.id, productFilesTable.fileId),
+    )
+    .groupBy(productsTable.id, categoriesTable.id);
 
-  if (!product) return undefined;
-
-  return {
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    categoryId: product.categoryId,
-    status: product.status,
-    slug: product.slug,
-    images: product.productsToFiles.map(({ file }) => ({
-      id: file.id,
-      name: file.name,
-      fileType: file.fileType,
-      url: file.url,
-    })),
-  };
+  return product;
 }
 
 export type GetAllProductsConfig = {
@@ -206,15 +234,24 @@ export type GetAllProductsConfig = {
   sort?: Partial<
     Record<"id" | "name" | "status" | "category" | "createdAt", "asc" | "desc">
   >;
+  status?: string[];
 };
 
 export async function getAllProductsDB(config: GetAllProductsConfig) {
-  const { page, pageSize, search, sort } = config;
+  const { page, pageSize, search, sort, status } = config;
   const offset = (page - 1) * pageSize;
 
-  const searchCondition = search
-    ? ilike(productsTable.name, `%${search}%`)
-    : undefined;
+  const searchCondition = and(
+    search ? ilike(productsTable.name, `%${search}%`) : undefined,
+    status
+      ? status.length > 0
+        ? inArray(
+            productsTable.status,
+            status as typeof productStatusEnum.enumValues,
+          )
+        : undefined
+      : undefined,
+  );
 
   const orderBy = sort
     ? Object.entries(sort).map(([key, direction]) =>
@@ -232,17 +269,39 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
     .select({
       id: productsTable.id,
       name: productsTable.name,
+      price: productsTable.price,
       slug: productsTable.slug,
       status: productsTable.status,
       category: categoriesTable.name,
       createdAt: productsTable.createdAt,
       updatedAt: productsTable.updatedAt,
+      images: sql<Image[]>`COALESCE(
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'id', ${uploadedFilesTable.id},
+            'name', ${uploadedFilesTable.name},
+            'url', ${uploadedFilesTable.url},
+            'fileType', ${uploadedFilesTable.fileType},
+            'uploadedAt', ${uploadedFilesTable.uploadedAt}
+          )
+        ) FILTER (WHERE ${uploadedFilesTable.id} IS NOT NULL), '[]'
+      )`,
     })
     .from(productsTable)
     .offset(offset)
     .where(searchCondition)
     .leftJoin(categoriesTable, eq(categoriesTable.id, productsTable.categoryId))
-    .orderBy(...orderBy);
+    .leftJoin(
+      productFilesTable,
+      eq(productsTable.id, productFilesTable.productId),
+    )
+    .leftJoin(
+      uploadedFilesTable,
+      eq(productFilesTable.fileId, uploadedFilesTable.id),
+    )
+    .orderBy(...orderBy)
+    .groupBy(productsTable.id, categoriesTable.name);
+
   const [{ productsCount }] = await db
     .select({ productsCount: count() })
     .from(productsTable)

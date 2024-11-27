@@ -33,7 +33,8 @@ export default async function EditProduct({
       defaultValues={{
         slug: product.slug,
         name: product.name,
-        categoryId: product.categoryId,
+        price: product.price,
+        categoryId: product.category?.id || null,
         description: product.description,
         status: product.status,
         images: product.images.map((image) => image.id),

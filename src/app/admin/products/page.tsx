@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { ComponentType, Suspense } from "react";
 
 import Link from "next/link";
 
@@ -16,13 +16,14 @@ import {
 
 import { z } from "zod";
 
-import { DATATABLE_PAGE_SIZE } from "@/configs/constants";
+import { DATATABLE_PAGE_SIZE, productStatus } from "@/configs/constants";
 import { ensureAdmin } from "@/features/auth/server/auth.query";
 import {
   ProductsAllowedKeys,
   columns,
 } from "@/features/products/components/products-columns";
 import { getAllProducts } from "@/features/products/server/products.query";
+import { ArchiveIcon, CircleCheckIcon, FileIcon } from "@/libs/lucide-client";
 import { SearchParams } from "@/types";
 import { zodTransformSortSearchParams } from "@/utils/zod-transform-sort-search-params";
 
@@ -71,6 +72,7 @@ async function ProductsTable({
 }: {
   searchParams: z.infer<typeof searchParamsSchema>;
 }) {
+  console.log(searchParams.status);
   const data = await getAllProducts(searchParams);
 
   return (
@@ -78,22 +80,42 @@ async function ProductsTable({
       columns={columns}
       data={data.products}
       dataKey="products"
+      filters={[{ accessorKey: "status", title: "Status", options: statuses }]}
       options={{
         pageCount: data.pageCount,
         initialState: {
           columnVisibility: { updatedAt: false },
-          sorting: [{ desc: true, id: "createdAt" }],
+          sorting: Object.entries(searchParams.sort).map(([key, value]) => ({
+            desc: value === "desc",
+            id: key,
+          })),
         },
       }}
     />
   );
 }
 
+const productStatusIcons: Record<
+  (typeof productStatus)[number],
+  ComponentType<{ className?: string }>
+> = {
+  draft: FileIcon,
+  active: CircleCheckIcon,
+  archived: ArchiveIcon,
+};
+
+const statuses = productStatus.map((status) => ({
+  value: status,
+  label: status.charAt(0).toUpperCase() + status.slice(1),
+  icon: productStatusIcons[status],
+}));
+
 const allowedKeys: ProductsAllowedKeys[] = [
   "id",
   "name",
   "status",
   "slug",
+  "price",
   "category",
   "createdAt",
   "updatedAt",
@@ -114,4 +136,16 @@ const searchParamsSchema = z.object({
     .default("createdAt.desc;")
     .transform(zodTransformSortSearchParams(allowedKeys))
     .catch({ createdAt: "desc" }),
+  status: z
+    .string()
+    .optional()
+    .default("")
+    .transform((value) =>
+      value
+        .split(".")
+        .filter((val) =>
+          productStatus.includes(val as (typeof productStatus)[number]),
+        ),
+    )
+    .catch([]),
 });

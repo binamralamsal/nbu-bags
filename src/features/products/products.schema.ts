@@ -39,6 +39,10 @@ export const newProductSchema = z.object({
       message:
         "Slug can only contain lowercase letters, numbers, and hyphens. Spaces are not allowed.",
     }),
+  price: z
+    .number({ message: "Price must only include numbers or decimal." })
+    .positive("Price must be greater than 0.")
+    .describe("The price of the product."),
   description: z
     .string()
     .trim()

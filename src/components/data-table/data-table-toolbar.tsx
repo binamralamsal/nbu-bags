@@ -1,24 +1,28 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
+
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { FiltersType } from "./data-table";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { DataTableViewOptions } from "./data-table-view-options";
 
 import { Table } from "@tanstack/react-table";
 import { SearchIcon } from "lucide-react";
 
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { DataTableViewOptions } from "./data-table-view-options";
-
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   dataKey?: string;
+  filters?: FiltersType[];
 }
 
 export function DataTableToolbar<TData>({
   table,
   dataKey = "data",
+  filters,
 }: DataTableToolbarProps<TData>) {
   const [query, setQuery] = useState("");
 
@@ -43,20 +47,48 @@ export function DataTableToolbar<TData>({
 
   return (
     <div className="flex items-center justify-between">
-      <form
-        className="flex flex-1 items-center space-x-2"
-        onSubmit={handleSearchSubmit}
-      >
-        <Input
-          placeholder={`Search ${dataKey}`}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="h-10 w-[150px] lg:w-[350px]"
+      <div className="flex items-center gap-2">
+        <form
+          className="flex flex-1 items-center space-x-2"
+          onSubmit={handleSearchSubmit}
+        >
+          <Input
+            placeholder={`Search ${dataKey}`}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="h-10 w-[150px] lg:w-[350px]"
+          />
+          <Button size="icon">
+            <SearchIcon />
+          </Button>
+        </form>
+        {/* {table.getColumn("status") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("status")}
+            title="Status"
+            options={statuses}
+          />
+        )} */}
+
+        {filters?.map((filter) => (
+          <Fragment key={filter.accessorKey}>
+            {table.getColumn(filter.accessorKey) && (
+              <DataTableFacetedFilter
+                column={table.getColumn(filter.accessorKey)}
+                title={filter.title}
+                options={filter.options}
+              />
+            )}
+          </Fragment>
+        ))}
+      </div>
+      {/* {table.getColumn("priority") && (
+        <DataTableFacetedFilter
+          column={table.getColumn("priority")}
+          title="Priority"
+          options={priorities}
         />
-        <Button size="icon">
-          <SearchIcon />
-        </Button>
-      </form>
+      )} */}
       <DataTableViewOptions table={table} />
     </div>
   );

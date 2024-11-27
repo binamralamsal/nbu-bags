@@ -28,11 +28,24 @@ import {
 
 import { DATATABLE_PAGE_SIZE } from "@/configs/constants";
 
+export type FiltersOptionsType = {
+  value: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
+
+export type FiltersType = {
+  accessorKey: string;
+  title: string;
+  options: FiltersOptionsType[];
+};
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   dataKey?: string;
   options?: Omit<TableOptions<TData>, "data" | "columns" | "getCoreRowModel">;
+  filters?: FiltersType[];
 }
 
 export function DataTable<TData, TValue>({
@@ -40,6 +53,7 @@ export function DataTable<TData, TValue>({
   data,
   dataKey,
   options,
+  filters,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     ...(options?.initialState?.sorting || []),
@@ -96,7 +110,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} dataKey={dataKey} />
+      <DataTableToolbar table={table} dataKey={dataKey} filters={filters} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
