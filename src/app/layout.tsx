@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import { site } from "@/configs/site";
 import { ConfirmProvider } from "@/stores/confirm-alert";
+import { cn } from "@/utils/cn";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={cn(inter.className, "antialiased")}>
         <NextTopLoader />
         <ConfirmProvider>{children}</ConfirmProvider>
         <Toaster />

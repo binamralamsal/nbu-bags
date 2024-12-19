@@ -5,6 +5,7 @@ import { NewCategorySchema, NewProductSchema } from "../products.schema";
 import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { DatabaseError } from "pg";
 
+import { productStatus } from "@/configs/constants";
 import { InternalServerError } from "@/errors/internal-server-error";
 import { db } from "@/libs/drizzle";
 import {
@@ -234,7 +235,7 @@ export type GetAllProductsConfig = {
   sort?: Partial<
     Record<"id" | "name" | "status" | "category" | "createdAt", "asc" | "desc">
   >;
-  status?: string[];
+  status?: Partial<(typeof productStatus)[number]>[];
 };
 
 export async function getAllProductsDB(config: GetAllProductsConfig) {
