@@ -79,6 +79,7 @@ export function ProductForm(props: {
       images: [],
       status: "draft",
       price: undefined,
+      salePrice: null,
     },
     mode: "all",
   });
@@ -173,28 +174,82 @@ export function ProductForm(props: {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              Price <span className="text-destructive">*</span>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Rs. 1000"
-                                type="number"
-                                value={String(field.value)}
-                                onChange={(event) =>
-                                  field.onChange(Number(event.target.value))
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+
+                      <div className="grid gap-4 lg:grid-cols-2">
+                        <FormField
+                          control={form.control}
+                          name="price"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                Price{" "}
+                                <span className="text-destructive">*</span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="1000"
+                                  type="text"
+                                  value={
+                                    field.value === undefined
+                                      ? ""
+                                      : `${field.value}`
+                                  }
+                                  onChange={(event) => {
+                                    if (event.target.value.endsWith("."))
+                                      return field.onChange(event.target.value);
+
+                                    const value = Number(event.target.value);
+
+                                    if (value === 0 || isNaN(value)) {
+                                      field.onChange(undefined);
+                                    } else {
+                                      field.onChange(value);
+                                    }
+                                  }}
+                                  inputMode="numeric"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="salePrice"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Sale Price</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="900"
+                                  type="text"
+                                  value={
+                                    field.value === null ? "" : `${field.value}`
+                                  }
+                                  onChange={(event) => {
+                                    if (event.target.value.endsWith("."))
+                                      return field.onChange(event.target.value);
+
+                                    const value = Number(event.target.value);
+
+                                    if (value === 0 || isNaN(value)) {
+                                      field.onChange(null);
+                                    } else {
+                                      field.onChange(value);
+                                    }
+                                  }}
+                                  inputMode="numeric"
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                (Optional) Discounted price for the product.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
                       <FormField
                         control={form.control}

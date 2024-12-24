@@ -90,6 +90,7 @@ export const productsTable = pgTable("products", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   price: integer("price").notNull(),
+  salePrice: integer("sale_price"),
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
   status: productStatusEnum().default(defaultProductStatus).notNull(),

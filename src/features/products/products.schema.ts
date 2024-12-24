@@ -43,6 +43,12 @@ export const newProductSchema = z.object({
     .number({ message: "Price must only include numbers or decimal." })
     .positive("Price must be greater than 0.")
     .describe("The price of the product."),
+  salePrice: z
+    .number({ message: "Sale price must only include numbers or decimal." })
+    .positive("Sale price must be greater than 0.")
+    .nullable()
+    .default(null)
+    .describe("The discounted price of the product."),
   description: z
     .string()
     .trim()

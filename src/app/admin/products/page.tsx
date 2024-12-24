@@ -72,7 +72,6 @@ async function ProductsTable({
 }: {
   searchParams: z.infer<typeof searchParamsSchema>;
 }) {
-  console.log(searchParams.status);
   const data = await getAllProducts(searchParams);
 
   return (
@@ -116,10 +115,13 @@ const allowedKeys: ProductsAllowedKeys[] = [
   "status",
   "slug",
   "price",
+  "salePrice",
   "category",
   "createdAt",
   "updatedAt",
 ];
+
+type ProductStatus = (typeof productStatus)[number];
 
 const searchParamsSchema = z.object({
   page: z.coerce.number().int().optional().default(1).catch(1),
@@ -143,8 +145,8 @@ const searchParamsSchema = z.object({
     .transform((value) =>
       value
         .split(".")
-        .filter((val) =>
-          productStatus.includes(val as (typeof productStatus)[number]),
+        .filter((val): val is ProductStatus =>
+          productStatus.includes(val as ProductStatus),
         ),
     )
     .catch([]),

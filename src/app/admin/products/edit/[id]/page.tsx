@@ -34,6 +34,7 @@ export default async function EditProduct({
         slug: product.slug,
         name: product.name,
         price: product.price,
+        salePrice: product.salePrice,
         categoryId: product.category?.id || null,
         description: product.description,
         status: product.status,

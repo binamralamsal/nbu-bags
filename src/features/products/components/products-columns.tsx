@@ -45,6 +45,7 @@ export type Product = {
   status: string;
   slug: string;
   price: number;
+  salePrice: number | null;
   category: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -76,6 +77,13 @@ export const columns: ColumnDef<Product>[] = [
       <DataTableColumnHeader column={column} title="Price" />
     ),
     cell: ({ row }) => `Rs. ${row.original.price}`,
+  },
+  {
+    accessorKey: "salePrice",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sale Price" />
+    ),
+    cell: ({ row }) => row.original.salePrice || "Null",
   },
   {
     accessorKey: "status",

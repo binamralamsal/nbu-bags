@@ -6,6 +6,7 @@ import { cn } from "@/utils/cn";
 type ProductCardProps = {
   name: string;
   price: number;
+  salePrice: number | null;
   slug: string;
   category: string | null;
   images: Partial<{ url: string }[]>;
@@ -52,7 +53,19 @@ export function ProductCard(props: ProductCardProps) {
         <Link href={productUrl} className="block font-semibold tracking-tight">
           {props.name}
         </Link>
-        <div className="text-gray-700">Rs. {props.price.toLocaleString()}</div>
+        <div className="text-gray-700">
+          {props.salePrice ? (
+            <s className="text-gray-500">Rs. {props.price.toLocaleString()}</s>
+          ) : (
+            <span>Rs. {props.price.toLocaleString()}</span>
+          )}
+
+          {props.salePrice && (
+            <span className="ml-2 text-primary">
+              Rs. {props.salePrice.toLocaleString()}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

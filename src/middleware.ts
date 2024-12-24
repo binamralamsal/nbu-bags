@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { parseCookies } from "@/libs/parse-cookies";
-
 import { env } from "./configs/env";
+
+import { parseCookies } from "@/libs/parse-cookies";
 
 export default async function middleware(request: NextRequest) {
   try {

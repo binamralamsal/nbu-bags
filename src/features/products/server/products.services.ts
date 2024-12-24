@@ -120,6 +120,7 @@ export async function addProductDB(data: NewProductSchema) {
           name: data.name,
           description: data.description,
           categoryId: data.categoryId,
+          salePrice: data.salePrice,
         })
         .returning({ id: productsTable.id });
 
@@ -156,6 +157,7 @@ export async function updateProductDB(id: number, data: NewProductSchema) {
           categoryId: data.categoryId,
           slug: data.slug,
           price: data.price,
+          salePrice: data.salePrice,
         })
         .where(eq(productsTable.id, id));
 
@@ -191,6 +193,7 @@ export async function getProductDB(id: number) {
       id: productsTable.id,
       name: productsTable.name,
       price: productsTable.price,
+      salePrice: productsTable.salePrice,
       slug: productsTable.slug,
       status: productsTable.status,
       description: productsTable.description,
@@ -271,6 +274,7 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
       id: productsTable.id,
       name: productsTable.name,
       price: productsTable.price,
+      salePrice: productsTable.salePrice,
       slug: productsTable.slug,
       status: productsTable.status,
       category: categoriesTable.name,
