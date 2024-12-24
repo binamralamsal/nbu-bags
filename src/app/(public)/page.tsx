@@ -114,7 +114,7 @@ export default async function Home() {
             <LockIcon className="h-5 w-5 text-primary" />
             <div className="text-sm">
               <h2 className="font-semibold capitalize">Secure Shopping</h2>
-              <p className="text-muted-foreground">You're in safe hands</p>
+              <p className="text-muted-foreground">You&apos;re in safe hands</p>
             </div>
           </div>
 
