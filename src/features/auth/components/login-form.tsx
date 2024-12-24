@@ -5,12 +5,19 @@ import { useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { loginUserAction } from "../server/auth.actions";
+
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
-
-import { loginUserAction } from "../server/auth.actions";
 
 export function LoginForm() {
   const [loginEmail, setLoginEmail] = useState("");
@@ -45,44 +52,63 @@ export function LoginForm() {
   }
 
   return (
-    <form
-      className="w-full max-w-md rounded bg-white p-6 shadow-md"
-      onSubmit={handleLogin}
-    >
-      <h2 className="mb-4 text-2xl font-bold">Login</h2>
-      <div className="mb-4 grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="loginEmail">Email</Label>
-        <Input
-          id="loginEmail"
-          onChange={handleChange(setLoginEmail)}
-          placeholder="Email"
-          required
-          type="email"
-          value={loginEmail}
-        />
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardDescription>Login with your email and password</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin}>
+            <div className="grid gap-6">
+              <div className="grid gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    onChange={handleChange(setLoginEmail)}
+                    value={loginEmail}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <a
+                      href="#"
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    onChange={handleChange(setLoginPassword)}
+                    value={loginPassword}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  Login
+                </Button>
+              </div>
+              <div className="text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <a href="#" className="underline underline-offset-4">
+                  Sign up
+                </a>
+              </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        and <a href="#">Privacy Policy</a>.
       </div>
-      <div className="mb-4 grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="loginPassword">Password</Label>
-        <Input
-          id="loginPassword"
-          onChange={handleChange(setLoginPassword)}
-          placeholder="Password"
-          required
-          type="password"
-          value={loginPassword}
-        />
-      </div>
-
-      <Button className="w-full" size="lg" type="submit">
-        Login
-      </Button>
-
-      {/* <small className="flex items-center gap-2 text-gray-600">
-        Forgot Password?
-        <Button asChild variant="link" className="p-0">
-          <Link href={forgotPasswordUrl}>Click Here</Link>
-        </Button>
-      </small> */}
-    </form>
+    </div>
   );
 }
