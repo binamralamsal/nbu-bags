@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRightIcon,
   LockIcon,
-  MoveRightIcon,
   RefreshCcwIcon,
   TagIcon,
   TruckIcon,
@@ -11,6 +10,8 @@ import {
 
 import { ProductCard } from "@/features/products/components/product-card";
 import { getAllProducts } from "@/features/products/server/products.query";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const { products } = await getAllProducts({
