@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PlaceholderImage } from "@/components/placeholder-image";
+
 import { cn } from "@/utils/cn";
 
 type ProductCardProps = {
@@ -21,16 +23,20 @@ export function ProductCard(props: ProductCardProps) {
   return (
     <div>
       <Link href={productUrl} className="group relative block">
-        <Image
-          src={firstImage?.url || "/file.svg"}
-          alt={`${props.name}`}
-          width={600}
-          height={600}
-          className={cn(
-            "h-60 w-full object-cover transition duration-500 md:h-80",
-            secondImage && "group-hover:opacity-0",
-          )}
-        />
+        {firstImage ? (
+          <Image
+            src={firstImage?.url || "/file.svg"}
+            alt={`${props.name}`}
+            width={600}
+            height={600}
+            className={cn(
+              "h-60 w-full object-cover transition duration-500 md:h-80",
+              secondImage && "group-hover:opacity-0",
+            )}
+          />
+        ) : (
+          <PlaceholderImage className="h-60 w-full object-cover md:h-80" />
+        )}
 
         {secondImage && (
           <Image

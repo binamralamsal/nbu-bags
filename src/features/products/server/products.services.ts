@@ -2,7 +2,17 @@ import "server-only";
 
 import { NewCategorySchema, NewProductSchema } from "../products.schema";
 
-import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  between,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  sql,
+} from "drizzle-orm";
 import { DatabaseError } from "pg";
 
 import { productStatus } from "@/configs/constants";
@@ -235,14 +245,17 @@ export type GetAllProductsConfig = {
   page: number;
   pageSize: number;
   search?: string;
+  categoriesSlugs?: string[];
   sort?: Partial<
     Record<"id" | "name" | "status" | "category" | "createdAt", "asc" | "desc">
   >;
+  priceRange?: [number, number];
   status?: Partial<(typeof productStatus)[number]>[];
 };
 
 export async function getAllProductsDB(config: GetAllProductsConfig) {
-  const { page, pageSize, search, sort, status } = config;
+  const { page, pageSize, search, sort, status, categoriesSlugs, priceRange } =
+    config;
   const offset = (page - 1) * pageSize;
 
   const searchCondition = and(
@@ -254,6 +267,12 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
             status as typeof productStatusEnum.enumValues,
           )
         : undefined
+      : undefined,
+    categoriesSlugs && categoriesSlugs.length > 0
+      ? inArray(categoriesTable.slug, categoriesSlugs)
+      : undefined,
+    priceRange
+      ? between(productsTable.salePrice, priceRange[0], priceRange[1])
       : undefined,
   );
 
@@ -310,13 +329,18 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
   const [{ productsCount }] = await db
     .select({ productsCount: count() })
     .from(productsTable)
-    .where(searchCondition);
+    .where(searchCondition)
+    .leftJoin(
+      categoriesTable,
+      eq(categoriesTable.id, productsTable.categoryId),
+    );
 
   const pageCount = Math.ceil(productsCount / pageSize);
 
   return {
     products,
     pageCount,
+    currentPage: page,
   };
 }
 

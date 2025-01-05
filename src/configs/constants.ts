@@ -42,6 +42,8 @@ export const productStatus = ["draft", "active", "archived"] as const;
 export const defaultProductStatus: (typeof productStatus)[number] = "draft";
 
 export const DATATABLE_PAGE_SIZE = 15;
+export const MIN_PRICE_RANGE = 0;
+export const MAX_PRICE_RANGE = 20_000;
 
 export const IMAGE_EXTENSIONS = [
   ".jpg",
