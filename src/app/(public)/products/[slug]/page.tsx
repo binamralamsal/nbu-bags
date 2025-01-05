@@ -6,10 +6,7 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 
 import { ProductImagesGallery } from "@/features/products/components/product-images-gallery";
-import {
-  getProduct,
-  getProductBySlug,
-} from "@/features/products/server/products.query";
+import { getProductBySlug } from "@/features/products/server/products.query";
 
 export default async function SingleProductPage({
   params,
