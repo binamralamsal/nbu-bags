@@ -26,9 +26,7 @@ export function ProductImagesGallery({
   const activeImage = images[activeImageIndex];
 
   if (!activeImage)
-    return (
-      <PlaceholderImage className="h-[30rem] w-full object-cover md:h-[40rem]" />
-    );
+    return <PlaceholderImage className="h-[30rem] w-full md:h-[40rem]" />;
 
   return (
     <div>
