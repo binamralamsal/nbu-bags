@@ -18,12 +18,15 @@ export default async function AdminLayout({
   await ensureAdmin({ redirect: true });
 
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
+  const sidebarStateCookie = cookieStore.get("sidebar:state")?.value;
+  const isSidebarDefaultOpen = sidebarStateCookie
+    ? sidebarStateCookie === "true"
+    : true;
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
+    <SidebarProvider defaultOpen={isSidebarDefaultOpen}>
       <AdminSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="overflow-x-scroll">{children}</SidebarInset>
     </SidebarProvider>
   );
 }

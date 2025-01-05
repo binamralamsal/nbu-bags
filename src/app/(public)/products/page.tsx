@@ -36,7 +36,7 @@ export default async function ProductsPage({
     price: z
       .string()
       .optional()
-      .default("0.20000")
+      .default(`${MIN_PRICE_RANGE}.${MAX_PRICE_RANGE}`)
       .transform((val) => {
         const [min, max] = val.split(".").map((v) => parseInt(v, 10));
         if (isNaN(min) || isNaN(max) || min >= max) {

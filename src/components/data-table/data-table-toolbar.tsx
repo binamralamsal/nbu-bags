@@ -46,8 +46,8 @@ export function DataTableToolbar<TData>({
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-between">
+      <div className="flex flex-wrap items-center gap-2">
         <form
           className="flex flex-1 items-center space-x-2"
           onSubmit={handleSearchSubmit}
@@ -62,13 +62,6 @@ export function DataTableToolbar<TData>({
             <SearchIcon />
           </Button>
         </form>
-        {/* {table.getColumn("status") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
-          />
-        )} */}
 
         {filters?.map((filter) => (
           <Fragment key={filter.accessorKey}>
@@ -82,13 +75,7 @@ export function DataTableToolbar<TData>({
           </Fragment>
         ))}
       </div>
-      {/* {table.getColumn("priority") && (
-        <DataTableFacetedFilter
-          column={table.getColumn("priority")}
-          title="Priority"
-          options={priorities}
-        />
-      )} */}
+
       <DataTableViewOptions table={table} />
     </div>
   );
