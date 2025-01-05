@@ -84,8 +84,6 @@ export function ProductForm(props: {
     mode: "all",
   });
 
-  console.log(form.getValues());
-
   useFormDirtyState(
     form.formState.isDirty && !form.formState.isSubmitSuccessful,
   );
@@ -391,11 +389,8 @@ export function ProductForm(props: {
                 </Card>
               </div>
             </div>
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm">
-                Discard
-              </Button>
-              <Button size="sm">Save Product</Button>
+            <div className="grid gap-2 xs:grid-cols-2 md:hidden">
+              <ActionButtons isEditing={!!props.id} />
             </div>
           </div>
         </AdminPageWrapper>
