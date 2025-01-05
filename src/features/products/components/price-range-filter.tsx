@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -18,9 +18,12 @@ import { useSliderWithInput } from "@/hooks/use-slider-with-input";
 
 const PRICE_QUERY_PARAM_KEY = "price";
 
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
+function debounce<T extends (...args: Parameters<T>) => void>(
+  func: T,
+  delay: number,
+) {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>): void => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
@@ -59,10 +62,6 @@ export function PriceRangeFilter() {
     initialValue: getPriceRangeFromURL(),
   });
 
-  const [currentPriceRange, setCurrentPriceRange] = useState(
-    getPriceRangeFromURL(),
-  );
-
   const updateURLWithPriceRange = (updatedPriceRange: number[]) => {
     const updatedSearchParams = new URLSearchParams(searchParams);
 
@@ -86,11 +85,6 @@ export function PriceRangeFilter() {
   const debouncedUpdateURL = useRef(
     debounce(updateURLWithPriceRange, 500),
   ).current;
-
-  useEffect(() => {
-    const priceRange = getPriceRangeFromURL();
-    setCurrentPriceRange(priceRange);
-  }, [searchParams]);
 
   const handleSliderChangeWithURLUpdate = (newValue: number[]) => {
     handleSliderChange(newValue);
