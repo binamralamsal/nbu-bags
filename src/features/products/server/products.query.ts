@@ -8,6 +8,7 @@ import {
   getAllCategoriesDB,
   getAllProductsDB,
   getCategoryDB,
+  getProductBySlugDB,
   getProductDB,
 } from "./products.services";
 
@@ -23,6 +24,10 @@ export const getAllCategories = cache(
 
 export const getProduct = cache(async (id: number) => {
   return await getProductDB(id);
+});
+
+export const getProductBySlug = cache(async (slug: string) => {
+  return await getProductBySlugDB(slug);
 });
 
 export const getAllProducts = cache(async (config: GetAllProductsConfig) => {

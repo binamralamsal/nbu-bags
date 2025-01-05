@@ -50,6 +50,12 @@ export function ProductCard(props: ProductCardProps) {
             )}
           />
         )}
+
+        {props.salePrice && (
+          <div className="absolute left-0 top-4 bg-primary px-4 py-1 text-sm uppercase text-primary-foreground">
+            Sale
+          </div>
+        )}
       </Link>
 
       <div className="mt-4 md:mt-6">

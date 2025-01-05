@@ -3,6 +3,7 @@ import "server-only";
 import { NewCategorySchema, NewProductSchema } from "../products.schema";
 
 import {
+  SQL,
   and,
   asc,
   between,
@@ -197,7 +198,7 @@ type Image = {
   uploadedAt: string;
 };
 
-export async function getProductDB(id: number) {
+export async function getProductQuery(condition: SQL<unknown>) {
   const [product] = await db
     .select({
       id: productsTable.id,
@@ -210,6 +211,7 @@ export async function getProductDB(id: number) {
       category: {
         name: categoriesTable.name,
         id: categoriesTable.id,
+        slug: categoriesTable.slug,
       },
       createdAt: productsTable.createdAt,
       updatedAt: productsTable.updatedAt,
@@ -226,7 +228,7 @@ export async function getProductDB(id: number) {
     )`,
     })
     .from(productsTable)
-    .where(eq(productsTable.id, id))
+    .where(condition)
     .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id))
     .leftJoin(
       productFilesTable,
@@ -239,6 +241,14 @@ export async function getProductDB(id: number) {
     .groupBy(productsTable.id, categoriesTable.id);
 
   return product;
+}
+
+export async function getProductDB(id: number) {
+  return getProductQuery(eq(productsTable.id, id));
+}
+
+export async function getProductBySlugDB(slug: string) {
+  return getProductQuery(eq(productsTable.slug, slug));
 }
 
 export type GetAllProductsConfig = {
