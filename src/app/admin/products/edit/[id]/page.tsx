@@ -5,6 +5,7 @@ import { z } from "zod";
 import { ProductForm } from "@/features/products/components/product-form";
 import {
   getAllCategories,
+  getAllSizes,
   getProduct,
 } from "@/features/products/server/products.query";
 
@@ -25,12 +26,19 @@ export default async function EditProduct({
     pageSize: 1000,
   });
 
+  const { sizes } = await getAllSizes({
+    page: 1,
+    pageSize: 100,
+  });
+
   return (
     <ProductForm
       id={product.id}
       categories={categories}
       images={product.images}
+      sizes={sizes}
       defaultValues={{
+        sizes: product.sizes.map((size) => size.id),
         slug: product.slug,
         name: product.name,
         price: product.price,

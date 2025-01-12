@@ -1,6 +1,9 @@
 import { ensureAdmin } from "@/features/auth/server/auth.query";
 import { ProductForm } from "@/features/products/components/product-form";
-import { getAllCategories } from "@/features/products/server/products.query";
+import {
+  getAllCategories,
+  getAllSizes,
+} from "@/features/products/server/products.query";
 
 export default async function AdminDashboardNewProduct() {
   await ensureAdmin({ redirect: true });
@@ -10,5 +13,10 @@ export default async function AdminDashboardNewProduct() {
     pageSize: 1000,
   });
 
-  return <ProductForm categories={categories} />;
+  const { sizes } = await getAllSizes({
+    page: 1,
+    pageSize: 100,
+  });
+
+  return <ProductForm categories={categories} sizes={sizes} />;
 }

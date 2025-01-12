@@ -84,6 +84,31 @@ export const categoriesTable = pgTable("categories", {
 });
 export type CategoriesTableSelectType = typeof categoriesTable.$inferSelect;
 
+export const sizesTable = pgTable("sizes", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+export type SizesTableSelectType = typeof sizesTable.$inferSelect;
+
+export const colorsTable = pgTable("colors", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  color: text("color").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+export type ColorsTableSelectType = typeof colorsTable.$inferSelect;
+
 export const productStatusEnum = pgEnum("product_status", productStatus);
 
 export const productsTable = pgTable("products", {
@@ -105,6 +130,27 @@ export const productsTable = pgTable("products", {
     .$onUpdate(() => new Date()),
 });
 export type ProductsTableSelectType = typeof productsTable.$inferSelect;
+
+export const productSizesTable = pgTable(
+  "product_sizes",
+  {
+    productId: integer("product_id")
+      .notNull()
+      .references(() => productsTable.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    sizeId: integer("size_id")
+      .notNull()
+      .references(() => sizesTable.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.productId, t.sizeId] }),
+  }),
+);
 
 export const productFilesTable = pgTable(
   "product_files",
@@ -137,6 +183,8 @@ export const uploadedFilesTable = pgTable("uploaded_files", {
 
 export const productsRelations = relations(productsTable, ({ many, one }) => ({
   productsToFiles: many(productFilesTable),
+  productToSizes: many(productSizesTable),
+  colors: many(colorsTable),
   category: one(categoriesTable, {
     fields: [productsTable.categoryId],
     references: [categoriesTable.id],
@@ -147,10 +195,33 @@ export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
   products: many(productsTable),
 }));
 
+export const sizesRelations = relations(sizesTable, ({ many }) => ({
+  products: many(productsTable),
+  productToSizes: many(productSizesTable),
+}));
+
+export const colorsRelations = relations(colorsTable, ({ many }) => ({
+  products: many(productsTable),
+}));
+
 export const uploadedFilesRelations = relations(
   uploadedFilesTable,
   ({ many }) => ({
     productsToFiles: many(productFilesTable),
+  }),
+);
+
+export const productSizesRelations = relations(
+  productSizesTable,
+  ({ one }) => ({
+    product: one(productsTable, {
+      fields: [productSizesTable.productId],
+      references: [productsTable.id],
+    }),
+    file: one(sizesTable, {
+      fields: [productSizesTable.sizeId],
+      references: [sizesTable.id],
+    }),
   }),
 );
 

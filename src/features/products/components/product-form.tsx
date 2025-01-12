@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import MultipleSelector from "@/components/ui/multiselect";
 import {
   Select,
   SelectContent,
@@ -66,6 +67,7 @@ function ActionButtons(props: { isEditing?: boolean }) {
 export function ProductForm(props: {
   id?: number;
   categories: { id: number; name: string }[];
+  sizes: { id: number; name: string }[];
   defaultValues?: NewProductSchema;
   images?: UploadedFile[];
 }) {
@@ -77,6 +79,7 @@ export function ProductForm(props: {
       categoryId: null,
       description: "",
       images: [],
+      sizes: [],
       status: "draft",
       price: undefined,
       salePrice: null,
@@ -112,6 +115,11 @@ export function ProductForm(props: {
   const pageTitle = props.id
     ? `Edit ${props.defaultValues?.name} Product`
     : "Add New Product";
+
+  const sizes = props.sizes.map((size) => ({
+    value: size.id.toString(),
+    label: size.name,
+  }));
 
   return (
     <Form {...form}>
@@ -354,6 +362,55 @@ export function ProductForm(props: {
                     />
                   </CardContent>
                 </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Product Sizes</CardTitle>
+                  </CardHeader>
+
+                  <CardContent>
+                    <FormField
+                      control={form.control}
+                      name="sizes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <FormControl>
+                            <MultipleSelector
+                              commandProps={{
+                                label: "Select sizes",
+                              }}
+                              defaultOptions={sizes}
+                              placeholder="Select sizes"
+                              value={field.value.map((size) => ({
+                                value: size.toString(),
+                                label:
+                                  sizes.find((s) => s.value === size.toString())
+                                    ?.label || "Unknown",
+                              }))}
+                              onChange={(options) =>
+                                field.onChange(
+                                  options.map((option) =>
+                                    parseInt(option.value),
+                                  ),
+                                )
+                              }
+                              maxSelected={20}
+                              emptyIndicator={
+                                <p className="text-center text-sm">
+                                  No results found
+                                </p>
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                <div className="space-y-2"></div>
                 <Card
                   className="overflow-hidden"
                   x-chunk="dashboard-07-chunk-4"

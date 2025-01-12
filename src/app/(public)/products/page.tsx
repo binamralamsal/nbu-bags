@@ -5,9 +5,11 @@ import { CategoriesFilter } from "@/features/products/components/categories-filt
 import { PriceRangeFilter } from "@/features/products/components/price-range-filter";
 import { ProductCard } from "@/features/products/components/product-card";
 import { ProductsPagination } from "@/features/products/components/products-pagination";
+import { SizesFilter } from "@/features/products/components/sizes-filter";
 import {
   getAllCategories,
   getAllProducts,
+  getAllSizes,
 } from "@/features/products/server/products.query";
 import { SearchParams } from "@/types";
 
@@ -21,6 +23,11 @@ export default async function ProductsPage({
     pageSize: 9999,
   });
 
+  const { sizes } = await getAllSizes({
+    page: 1,
+    pageSize: 200,
+  });
+
   const searchParamsSchema = z.object({
     page: z.number().int().positive().optional().default(1).catch(1),
     categories: z
@@ -31,6 +38,14 @@ export default async function ProductsPage({
         val
           .split(".")
           .filter((v) => categories.some((category) => category.slug === v)),
+      )
+      .catch([]),
+    sizes: z
+      .string()
+      .optional()
+      .default("")
+      .transform((val) =>
+        val.split(".").filter((v) => sizes.some((size) => size.slug === v)),
       )
       .catch([]),
     price: z
@@ -60,6 +75,7 @@ export default async function ProductsPage({
     pageSize: 8,
     status: ["active"],
     categoriesSlugs: searchParams.categories,
+    sizesSlugs: searchParams.sizes,
     priceRange: searchParams.price,
   });
 
@@ -68,6 +84,7 @@ export default async function ProductsPage({
       <div>
         <CategoriesFilter categories={categories} />
         <PriceRangeFilter />
+        <SizesFilter sizes={sizes} />
       </div>
       <div className="py-4">
         <h2 className="text-2xl font-bold md:text-3xl">Products</h2>

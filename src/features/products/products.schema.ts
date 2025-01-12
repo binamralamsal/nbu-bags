@@ -15,13 +15,60 @@ export const newCategorySchema = z.object({
     .string()
     .trim()
     .min(2, { message: "Slug must be at least 2 characters long." })
-    .max(50, { message: "Slug must be less than 64 characters long." })
+    .max(50, { message: "Slug must be less than 50 characters long." })
     .regex(/^[a-z0-9-]+$/, {
       message:
         "Slug can only contain lowercase letters, numbers, and hyphens. Spaces are not allowed.",
     }),
 });
 export type NewCategorySchema = z.infer<typeof newCategorySchema>;
+
+export const newColorSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: "Color name must be at least 2 characters long." })
+    .max(50, { message: "Color name must be less than 50 characters long." })
+    .regex(/^[a-zA-Z\s]*$/, {
+      message: "Color name can only contain letters and spaces.",
+    }),
+  color: z
+    .string()
+    .trim()
+    .startsWith("#", { message: "Please choose a proper color." })
+    .length(7, { message: "Please choose a proper color." }),
+  slug: z
+    .string()
+    .trim()
+    .min(2, { message: "Slug must be at least 2 characters long." })
+    .max(50, { message: "Slug must be less than 50 characters long." })
+    .regex(/^[a-z0-9-]+$/, {
+      message:
+        "Slug can only contain lowercase letters, numbers, and hyphens. Spaces are not allowed.",
+    }),
+});
+export type NewColorSchema = z.infer<typeof newColorSchema>;
+
+export const newSizeSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { message: "Size name must be at least 1 characters long." })
+    .max(12, { message: "Size name must be less than 12 characters long." })
+    .regex(/^[a-zA-Z\s]*$/, {
+      message: "Size name can only contain letters and spaces.",
+    }),
+  slug: z
+    .string()
+    .trim()
+    .min(1, { message: "Slug must be at least 1 characters long." })
+    .max(12, { message: "Slug must be less than 12 characters long." })
+    .regex(/^[a-z0-9-]+$/, {
+      message:
+        "Slug can only contain lowercase letters, numbers, and hyphens. Spaces are not allowed.",
+    }),
+});
+export type NewSizeSchema = z.infer<typeof newSizeSchema>;
 
 export const newProductSchema = z.object({
   name: z
@@ -77,5 +124,12 @@ export const newProductSchema = z.object({
     .array()
     .max(20, { message: "You can't upload more than twenty images." })
     .describe("Images associated with the product."),
+  sizes: z
+    .number()
+    .positive("Size that you entered is invalid.")
+    .int("Size that you entered is invalid.")
+    .array()
+    .max(20, { message: "You can't select more than twenty sizes." })
+    .describe("Sizes associated with the product."),
 });
 export type NewProductSchema = z.infer<typeof newProductSchema>;

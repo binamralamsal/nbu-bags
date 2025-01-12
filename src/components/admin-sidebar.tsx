@@ -43,7 +43,7 @@ const nav = [
     icon: ShoppingCartIcon,
     items: [
       {
-        title: "Add new product",
+        title: "Add new",
         url: "/admin/products/new",
       },
       {
@@ -51,8 +51,12 @@ const nav = [
         url: "/admin/products/categories",
       },
       {
-        title: "Add new category",
-        url: "/admin/products/categories/new",
+        title: "Sizes",
+        url: "/admin/products/sizes",
+      },
+      {
+        title: "Colors",
+        url: "/admin/products/colors",
       },
     ],
   },

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 import { z } from "zod";
 
@@ -26,19 +27,23 @@ export default async function SingleProductPage({
         images={product.images}
         inSale={Boolean(product.salePrice)}
       />
-      <div className="space-y-4">
-        {product.category && (
-          <Link
-            href={`/products?categories=${product.category.slug}`}
-            className="text-muted-foreground transition hover:text-primary"
-          >
-            {product.category.name}
-          </Link>
-        )}
+      <div className="space-y-4 lg:space-y-6">
+        <div className="space-y-2">
+          {product.category && (
+            <Link
+              href={`/products?categories=${product.category.slug}`}
+              className="text-muted-foreground transition hover:text-primary"
+            >
+              {product.category.name}
+            </Link>
+          )}
 
-        <h2 className="text-balance text-2xl font-semibold md:text-3xl">
-          {product.name}
-        </h2>
+          <h2 className="text-balance text-2xl font-semibold md:text-3xl">
+            {product.name}
+          </h2>
+        </div>
+
+        <Separator />
 
         <div className="text-xl text-gray-700">
           {product.salePrice ? (
@@ -55,6 +60,15 @@ export default async function SingleProductPage({
             </span>
           )}
         </div>
+
+        {product.sizes.length > 0 && (
+          <div className="flex gap-1">
+            <h3 className="font-semibold">Sizes: </h3>
+            <span className="text-muted-foreground">
+              {product.sizes.map((size) => size.name).join(", ")}
+            </span>
+          </div>
+        )}
 
         <p>{product.description}</p>
 
