@@ -280,6 +280,39 @@ export function ProductForm(props: {
                     </div>
                   </CardContent>
                 </Card>
+                <Card
+                  className="overflow-hidden"
+                  x-chunk="dashboard-07-chunk-4"
+                >
+                  <CardHeader>
+                    <CardTitle>Product Images</CardTitle>
+                    <CardDescription>
+                      Lipsum dolor sit amet, consectetur adipiscing elit
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <FormField
+                      control={form.control}
+                      name="images"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <FileUpload
+                              maxFilesCount={20}
+                              maxFileSize="1gb"
+                              accept={["image/*"]}
+                              onChange={(files) =>
+                                field.onChange(files.map((file) => file.id))
+                              }
+                              initialFiles={props.images}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <Card>
@@ -401,41 +434,6 @@ export function ProductForm(props: {
                                   No results found
                                 </p>
                               }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                <div className="space-y-2"></div>
-                <Card
-                  className="overflow-hidden"
-                  x-chunk="dashboard-07-chunk-4"
-                >
-                  <CardHeader>
-                    <CardTitle>Product Images</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <FormField
-                      control={form.control}
-                      name="images"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <FileUpload
-                              maxFilesCount={20}
-                              maxFileSize="1gb"
-                              accept={["image/*"]}
-                              onChange={(files) =>
-                                field.onChange(files.map((file) => file.id))
-                              }
-                              initialFiles={props.images}
                             />
                           </FormControl>
                           <FormMessage />

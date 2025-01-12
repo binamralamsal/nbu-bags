@@ -79,6 +79,8 @@ export default async function ProductsPage({
     priceRange: searchParams.price,
   });
 
+  console.log(products);
+
   return (
     <section className="container my-4 grid gap-2 md:my-6 md:grid-cols-2 md:gap-6 lg:my-8 lg:grid-cols-[2fr,6fr] lg:gap-10">
       <div>

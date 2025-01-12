@@ -545,16 +545,22 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
       category: categoriesTable.name,
       createdAt: productsTable.createdAt,
       updatedAt: productsTable.updatedAt,
-      images: sql<Image[]>`COALESCE(
-        JSON_AGG(
-          JSON_BUILD_OBJECT(
-            'id', ${uploadedFilesTable.id},
-            'name', ${uploadedFilesTable.name},
-            'url', ${uploadedFilesTable.url},
-            'fileType', ${uploadedFilesTable.fileType},
-            'uploadedAt', ${uploadedFilesTable.uploadedAt}
-          )
-        ) FILTER (WHERE ${uploadedFilesTable.id} IS NOT NULL), '[]'
+      images: sql<Image[]>`(
+        SELECT COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'id', ${uploadedFilesTable.id},
+              'name', ${uploadedFilesTable.name},
+              'url', ${uploadedFilesTable.url},
+              'fileType', ${uploadedFilesTable.fileType},
+              'uploadedAt', ${uploadedFilesTable.uploadedAt}
+            )
+          ) FILTER (WHERE ${uploadedFilesTable.id} IS NOT NULL), '[]'
+        )
+        FROM ${uploadedFilesTable}
+        JOIN ${productFilesTable}
+        ON ${uploadedFilesTable.id} = ${productFilesTable.fileId}
+        WHERE ${productFilesTable.productId} = ${productsTable.id}
       )`,
     })
     .from(productsTable)
@@ -566,14 +572,6 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
       eq(productsTable.id, productSizesTable.productId),
     )
     .leftJoin(sizesTable, eq(sizesTable.id, productSizesTable.sizeId))
-    .leftJoin(
-      productFilesTable,
-      eq(productsTable.id, productFilesTable.productId),
-    )
-    .leftJoin(
-      uploadedFilesTable,
-      eq(productFilesTable.fileId, uploadedFilesTable.id),
-    )
     .orderBy(...orderBy)
     .groupBy(productsTable.id, categoriesTable.name);
 

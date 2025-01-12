@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -34,10 +34,6 @@ export function SizesFilter({
   }
 
   const [selectedSizes, setSelectedSizes] = useState(getSelectedSizesFromURL());
-
-  useEffect(() => {
-    setSelectedSizes(getSelectedSizesFromURL());
-  }, [searchParams]);
 
   function updateURLWithSizes(updatedSizes: string[]) {
     const updatedSearchParams = new URLSearchParams(searchParams);

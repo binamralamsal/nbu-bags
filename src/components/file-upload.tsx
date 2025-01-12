@@ -404,6 +404,7 @@ export function FileUpload(props: FileUploadProps) {
                   size="icon"
                   variant="destructive"
                   type="button"
+                  className="justify-self-end"
                 >
                   <XIcon />
                 </Button>
@@ -427,6 +428,7 @@ export function FileUpload(props: FileUploadProps) {
                   size="icon"
                   variant="destructive"
                   type="button"
+                  className="justify-self-end"
                 >
                   <TrashIcon />
                 </Button>
@@ -615,7 +617,7 @@ function FileIcon({
 
 function FileList(props: { children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[1fr,6fr,1fr] items-center gap-2">
+    <div className="grid grid-cols-[40px,6fr,1fr] items-center gap-2">
       {props.children}
     </div>
   );

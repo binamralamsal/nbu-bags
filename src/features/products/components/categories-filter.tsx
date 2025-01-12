@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -36,10 +36,6 @@ export function CategoriesFilter({
   const [selectedCategories, setSelectedCategories] = useState(
     getSelectedCategoriesFromURL(),
   );
-
-  useEffect(() => {
-    setSelectedCategories(getSelectedCategoriesFromURL());
-  }, [searchParams]);
 
   function updateURLWithCategories(updatedCategories: string[]) {
     const updatedSearchParams = new URLSearchParams(searchParams);
