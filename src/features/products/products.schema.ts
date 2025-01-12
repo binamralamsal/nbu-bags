@@ -75,7 +75,7 @@ export const newProductSchema = z.object({
     .positive("Image that you uploaded is invalid.")
     .int("Image that you uploaded is invalid.")
     .array()
-    .max(5, { message: "You can't upload more than five images." })
+    .max(20, { message: "You can't upload more than twenty images." })
     .describe("Images associated with the product."),
 });
 export type NewProductSchema = z.infer<typeof newProductSchema>;

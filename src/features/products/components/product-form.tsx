@@ -372,7 +372,7 @@ export function ProductForm(props: {
                         <FormItem>
                           <FormControl>
                             <FileUpload
-                              maxFilesCount={5}
+                              maxFilesCount={20}
                               maxFileSize="1gb"
                               accept={["image/*"]}
                               onChange={(files) =>

@@ -5,6 +5,14 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { PlaceholderImage } from "@/components/placeholder-image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  useCarousel,
+} from "@/components/ui/carousel";
 
 import { cn } from "@/utils/cn";
 
@@ -51,23 +59,57 @@ export function ProductImagesGallery({
             Sale
           </div>
         )}
+
+        <div className="absolute bottom-4 right-4 bg-background px-4 py-1 text-sm uppercase text-foreground">
+          {activeImageIndex + 1} / {images.length}
+        </div>
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-5">
-        {images.map((image, index) => (
-          <button key={image.id} onClick={() => setActiveImageIndex(index)}>
-            <Image
-              src={image.url}
-              alt={image.name}
-              width={30}
-              height={30}
-              className={cn(
-                "h-32 w-full border-b-2 border-transparent bg-gray-100 object-contain transition",
-                activeImageIndex === index && "border-primary",
-              )}
-            />
-          </button>
-        ))}
-      </div>
+
+      <Carousel className="mt-4 max-w-[92vw]">
+        <CarouselContent>
+          {images.map((image, index) => (
+            <CarouselItem
+              key={index}
+              className="basis-1/3 md:basis-1/4 lg:basis-1/6"
+            >
+              <button key={image.id} onClick={() => setActiveImageIndex(index)}>
+                <Image
+                  src={image.url}
+                  alt={image.name}
+                  width={30}
+                  height={30}
+                  className={cn(
+                    "h-20 w-full border-b-2 border-transparent bg-gray-100 object-contain p-3 transition",
+                    activeImageIndex === index && "border-primary",
+                  )}
+                />
+              </button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <ProductImagesNavigationButtons />
+      </Carousel>
     </div>
+  );
+}
+
+function ProductImagesNavigationButtons() {
+  const { canScrollNext, canScrollPrev } = useCarousel();
+
+  return (
+    <>
+      {canScrollPrev && (
+        <CarouselPrevious
+          variant="default"
+          className="left-0 h-full rounded-none border-0 opacity-0 transition duration-500 hover:opacity-80"
+        />
+      )}
+      {canScrollNext && (
+        <CarouselNext
+          variant="default"
+          className="right-0 h-full rounded-none border-0 opacity-0 transition duration-500 hover:opacity-80"
+        />
+      )}
+    </>
   );
 }
