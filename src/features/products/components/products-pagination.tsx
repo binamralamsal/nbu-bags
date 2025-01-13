@@ -32,7 +32,7 @@ export function ProductsPagination({
   if (pageCount === 1) return null;
 
   return (
-    <Pagination>
+    <Pagination className="mt-4">
       <PaginationContent>
         {currentPage > 1 && (
           <PaginationItem>

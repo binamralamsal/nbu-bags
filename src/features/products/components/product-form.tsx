@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
 
 import Link from "next/link";
@@ -10,7 +10,15 @@ import { NewProductSchema, newProductSchema } from "../products.schema";
 import { saveProductAction } from "../server/products.actions";
 
 import { AdminPageWrapper } from "@/components/admin-page-wrapper";
-import { FileUpload, UploadedFile } from "@/components/file-upload";
+import {
+  FileIcon,
+  FileList,
+  FileName,
+  FileUpload,
+  FileUploader,
+  UploadedFile,
+  useFileUploader,
+} from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,7 +48,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, TrashIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { productStatus } from "@/configs/constants";
@@ -64,10 +72,13 @@ function ActionButtons(props: { isEditing?: boolean }) {
   );
 }
 
+type Color = { id: number; name: string; color: string };
+
 export function ProductForm(props: {
   id?: number;
   categories: { id: number; name: string }[];
   sizes: { id: number; name: string }[];
+  colors: Color[];
   defaultValues?: NewProductSchema;
   images?: UploadedFile[];
 }) {
@@ -297,15 +308,29 @@ export function ProductForm(props: {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <FileUpload
+                            <FileUploader
                               maxFilesCount={20}
                               maxFileSize="1gb"
                               accept={["image/*"]}
                               onChange={(files) =>
-                                field.onChange(files.map((file) => file.id))
+                                field.onChange(
+                                  files.map((file) => {
+                                    const existingFile = field.value.find(
+                                      (f) => f.fileId === file.id,
+                                    );
+                                    return {
+                                      fileId: file.id,
+                                      colorId: existingFile?.colorId || null,
+                                    };
+                                  }),
+                                )
                               }
                               initialFiles={props.images}
-                            />
+                            >
+                              <FileUpload />
+                              <UploadingFilesList />
+                              <UploadedFilesList colors={props.colors} />
+                            </FileUploader>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -451,5 +476,121 @@ export function ProductForm(props: {
         </AdminPageWrapper>
       </form>
     </Form>
+  );
+}
+
+function UploadingFilesList() {
+  const { uploadingFiles, cancelUpload } = useFileUploader();
+
+  if (uploadingFiles.length === 0) return null;
+
+  return (
+    <div className="mt-4">
+      <p>Uploading files</p>
+      <div className="mt-2 space-y-2">
+        {uploadingFiles.map(({ file, preview, progress }) => (
+          <FileList key={file.name}>
+            <FileIcon fileType={file.type} name={file.name} preview={preview} />
+
+            <FileName name={file.name} progress={progress} />
+            <Button
+              onClick={() => cancelUpload(file)}
+              size="icon"
+              variant="destructive"
+              type="button"
+              className="justify-self-end"
+            >
+              <XIcon />
+            </Button>
+          </FileList>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function UploadedFilesList({ colors }: { colors: Color[] }) {
+  const { uploadedFiles, deleteFile } = useFileUploader();
+
+  const form = useFormContext();
+
+  const id = useId();
+
+  function handleSelectChange(value: string, fileId: number) {
+    form.setValue(
+      "images",
+      form
+        .getValues("images")
+        .map((image: NewProductSchema["images"][number]) =>
+          image.fileId === fileId
+            ? {
+                ...image,
+                colorId: value === "null" ? null : Number(value),
+              }
+            : image,
+        ),
+    );
+  }
+
+  if (uploadedFiles.length === 0) return null;
+
+  return (
+    <div className="mt-4">
+      <p>Uploaded files</p>
+      <div className="mt-2 space-y-2">
+        {uploadedFiles.map(({ name, url, fileType, id: fileId }) => (
+          <div
+            key={name}
+            className="grid grid-cols-[4fr,1fr] items-center justify-center gap-4"
+          >
+            <FileList className="flex-grow">
+              <FileIcon fileType={fileType} name={name} preview={url} />
+
+              <FileName name={name} />
+              <Button
+                onClick={() => deleteFile(url)}
+                size="icon"
+                variant="destructive"
+                type="button"
+                className="justify-self-end"
+              >
+                <TrashIcon />
+              </Button>
+            </FileList>
+
+            <Select
+              defaultValue={
+                form
+                  .getValues("images")
+                  .find(
+                    (image: NewProductSchema["images"][number]) =>
+                      image.fileId === fileId,
+                  )
+                  ?.colorId?.toString() || "null"
+              }
+              onValueChange={(value) => handleSelectChange(value, fileId)}
+            >
+              <SelectTrigger className="h-auto ps-2" id={id}>
+                <SelectValue placeholder="Assign a color" />
+              </SelectTrigger>
+              <SelectContent className="[&_*[role=option]>span]:end-2 [&_*[role=option]>span]:start-auto [&_*[role=option]]:pe-8 [&_*[role=option]]:ps-2">
+                <SelectItem value="null">None</SelectItem>
+                {colors.map((color) => (
+                  <SelectItem value={color.id.toString()} key={color.id}>
+                    <span className="flex items-center gap-2">
+                      <div
+                        className="h-6 w-6 rounded-full"
+                        style={{ backgroundColor: color.color }}
+                      ></div>
+                      <span className="block font-medium">{color.name}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

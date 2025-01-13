@@ -5,7 +5,6 @@ import { useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -97,52 +96,50 @@ export function PriceRangeFilter() {
   };
 
   return (
-    <Accordion type="single" collapsible defaultValue="price">
-      <AccordionItem value="price">
-        <AccordionTrigger>Price</AccordionTrigger>
-        <AccordionContent>
-          <div className="py-2">
-            <Slider
-              className="grow"
-              value={sliderValue}
-              onValueChange={handleSliderChangeWithURLUpdate}
-              min={MIN_PRICE_RANGE}
-              max={MAX_PRICE_RANGE}
-            />
-          </div>
-          <div className="mt-4 flex items-center gap-4 px-1">
-            <Input
-              className="h-8 px-2 py-1"
-              type="text"
-              inputMode="decimal"
-              value={inputValues[0]}
-              onChange={(e) => handleInputChange(e, 0)}
-              onBlur={() => handleInputBlurWithURLUpdate(inputValues[0], 0)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleInputBlurWithURLUpdate(inputValues[0], 0);
-                }
-              }}
-              aria-label="Enter minimum price"
-            />
+    <AccordionItem value="price">
+      <AccordionTrigger>Price</AccordionTrigger>
+      <AccordionContent>
+        <div className="py-2">
+          <Slider
+            className="grow"
+            value={sliderValue}
+            onValueChange={handleSliderChangeWithURLUpdate}
+            min={MIN_PRICE_RANGE}
+            max={MAX_PRICE_RANGE}
+          />
+        </div>
+        <div className="mt-4 flex items-center gap-4 px-1">
+          <Input
+            className="h-8 px-2 py-1"
+            type="text"
+            inputMode="decimal"
+            value={inputValues[0]}
+            onChange={(e) => handleInputChange(e, 0)}
+            onBlur={() => handleInputBlurWithURLUpdate(inputValues[0], 0)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleInputBlurWithURLUpdate(inputValues[0], 0);
+              }
+            }}
+            aria-label="Enter minimum price"
+          />
 
-            <Input
-              className="h-8 px-2 py-1"
-              type="text"
-              inputMode="decimal"
-              value={inputValues[1]}
-              onChange={(e) => handleInputChange(e, 1)}
-              onBlur={() => handleInputBlurWithURLUpdate(inputValues[1], 1)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleInputBlurWithURLUpdate(inputValues[1], 1);
-                }
-              }}
-              aria-label="Enter maximum price"
-            />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+          <Input
+            className="h-8 px-2 py-1"
+            type="text"
+            inputMode="decimal"
+            value={inputValues[1]}
+            onChange={(e) => handleInputChange(e, 1)}
+            onBlur={() => handleInputBlurWithURLUpdate(inputValues[1], 1)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleInputBlurWithURLUpdate(inputValues[1], 1);
+              }
+            }}
+            aria-label="Enter maximum price"
+          />
+        </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }

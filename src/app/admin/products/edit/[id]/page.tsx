@@ -5,6 +5,7 @@ import { z } from "zod";
 import { ProductForm } from "@/features/products/components/product-form";
 import {
   getAllCategories,
+  getAllColors,
   getAllSizes,
   getProduct,
 } from "@/features/products/server/products.query";
@@ -31,6 +32,8 @@ export default async function EditProduct({
     pageSize: 100,
   });
 
+  const { colors } = await getAllColors({ page: 1, pageSize: 100 });
+
   return (
     <ProductForm
       id={product.id}
@@ -46,8 +49,12 @@ export default async function EditProduct({
         categoryId: product.category?.id || null,
         description: product.description,
         status: product.status,
-        images: product.images.map((image) => image.id),
+        images: product.images.map((image) => ({
+          fileId: image.id,
+          colorId: image.color?.id || null,
+        })),
       }}
+      colors={colors}
     />
   );
 }

@@ -1,13 +1,12 @@
 import { z } from "zod";
 
 import { MAX_PRICE_RANGE, MIN_PRICE_RANGE } from "@/configs/constants";
-import { CategoriesFilter } from "@/features/products/components/categories-filter";
-import { PriceRangeFilter } from "@/features/products/components/price-range-filter";
 import { ProductCard } from "@/features/products/components/product-card";
+import { ProductsFilters } from "@/features/products/components/products-filters";
 import { ProductsPagination } from "@/features/products/components/products-pagination";
-import { SizesFilter } from "@/features/products/components/sizes-filter";
 import {
   getAllCategories,
+  getAllColors,
   getAllProducts,
   getAllSizes,
 } from "@/features/products/server/products.query";
@@ -28,8 +27,10 @@ export default async function ProductsPage({
     pageSize: 200,
   });
 
+  const { colors } = await getAllColors({ page: 1, pageSize: 200 });
+
   const searchParamsSchema = z.object({
-    page: z.number().int().positive().optional().default(1).catch(1),
+    page: z.coerce.number().int().positive().optional().default(1).catch(1),
     categories: z
       .string()
       .optional()
@@ -48,6 +49,20 @@ export default async function ProductsPage({
         val.split(".").filter((v) => sizes.some((size) => size.slug === v)),
       )
       .catch([]),
+    colors: z
+      .string()
+      .optional()
+      .default("")
+      .transform((val) =>
+        val.split(".").filter((v) => colors.some((size) => size.slug === v)),
+      )
+      .catch([]),
+    accordion: z
+      .string()
+      .optional()
+      .default("category.price.size")
+      .transform((val) => val.split("."))
+      .catch(["category", "price", "size"]),
     price: z
       .string()
       .optional()
@@ -77,16 +92,18 @@ export default async function ProductsPage({
     categoriesSlugs: searchParams.categories,
     sizesSlugs: searchParams.sizes,
     priceRange: searchParams.price,
+    colorSlugs: searchParams.colors,
   });
-
-  console.log(products);
 
   return (
     <section className="container my-4 grid gap-2 md:my-6 md:grid-cols-2 md:gap-6 lg:my-8 lg:grid-cols-[2fr,6fr] lg:gap-10">
       <div>
-        <CategoriesFilter categories={categories} />
-        <PriceRangeFilter />
-        <SizesFilter sizes={sizes} />
+        <ProductsFilters
+          categories={categories}
+          sizes={sizes}
+          accordion={searchParams.accordion}
+          colors={colors}
+        />
       </div>
       <div className="py-4">
         <h2 className="text-2xl font-bold md:text-3xl">Products</h2>

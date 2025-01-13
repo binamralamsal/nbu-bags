@@ -2,6 +2,7 @@ import { ensureAdmin } from "@/features/auth/server/auth.query";
 import { ProductForm } from "@/features/products/components/product-form";
 import {
   getAllCategories,
+  getAllColors,
   getAllSizes,
 } from "@/features/products/server/products.query";
 
@@ -18,5 +19,7 @@ export default async function AdminDashboardNewProduct() {
     pageSize: 100,
   });
 
-  return <ProductForm categories={categories} sizes={sizes} />;
+  const { colors } = await getAllColors({ page: 1, pageSize: 100 });
+
+  return <ProductForm categories={categories} sizes={sizes} colors={colors} />;
 }

@@ -322,9 +322,10 @@ export async function addProductDB(data: NewProductSchema) {
         })
         .returning({ id: productsTable.id });
 
-      const productFilesData = data.images.map((fileId) => ({
+      const productFilesData = data.images.map((file) => ({
         productId: newProduct.id,
-        fileId,
+        fileId: file.fileId,
+        colorId: file.colorId,
       }));
 
       if (productFilesData.length > 0)
@@ -371,9 +372,10 @@ export async function updateProductDB(id: number, data: NewProductSchema) {
 
       if (data.images.length > 0) {
         await tx.insert(productFilesTable).values(
-          data.images.map((fileId) => ({
+          data.images.map((file) => ({
             productId: id,
-            fileId,
+            fileId: file.fileId,
+            colorId: file.colorId,
           })),
         );
       }
@@ -421,7 +423,9 @@ export async function getProductQuery(condition: SQL<unknown>) {
       },
       createdAt: productsTable.createdAt,
       updatedAt: productsTable.updatedAt,
-      images: sql<Image[]>`(
+      images: sql<
+        (Image & { color: { id: number; name: string; hex: string } | null })[]
+      >`(
         SELECT COALESCE(
           JSON_AGG(
             JSON_BUILD_OBJECT(
@@ -429,6 +433,14 @@ export async function getProductQuery(condition: SQL<unknown>) {
               'name', ${uploadedFilesTable.name},
               'url', ${uploadedFilesTable.url},
               'fileType', ${uploadedFilesTable.fileType},
+              'color', CASE 
+                WHEN ${colorsTable.id} IS NULL THEN NULL
+                  ELSE JSON_BUILD_OBJECT(
+                    'id', ${colorsTable.id},
+                    'name', ${colorsTable.name},
+                    'hex', ${colorsTable.color}
+                  )
+              END,
               'uploadedAt', ${uploadedFilesTable.uploadedAt}
             )
           ) FILTER (WHERE ${uploadedFilesTable.id} IS NOT NULL), '[]'
@@ -436,6 +448,8 @@ export async function getProductQuery(condition: SQL<unknown>) {
         FROM ${uploadedFilesTable}
         JOIN ${productFilesTable}
         ON ${uploadedFilesTable.id} = ${productFilesTable.fileId}
+        LEFT JOIN ${colorsTable}  -- Added join for colorsTable
+        ON ${productFilesTable.colorId} = ${colorsTable.id}  -- Join condition assuming colorId exists in uploadedFilesTable
         WHERE ${productFilesTable.productId} = ${productsTable.id}
       )`,
       sizes: sql<{ id: number; name: string; slug: string }[]>`(
@@ -478,6 +492,7 @@ export type GetAllProductsConfig = {
   search?: string;
   categoriesSlugs?: string[];
   sizesSlugs?: string[];
+  colorSlugs?: string[];
   sort?: Partial<
     Record<"id" | "name" | "status" | "category" | "createdAt", "asc" | "desc">
   >;
@@ -495,6 +510,7 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
     categoriesSlugs,
     priceRange,
     sizesSlugs,
+    colorSlugs,
   } = config;
   const offset = (page - 1) * pageSize;
 
@@ -519,6 +535,9 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
           between(productsTable.salePrice, priceRange[0], priceRange[1]),
           between(productsTable.price, priceRange[0], priceRange[1]),
         )
+      : undefined,
+    colorSlugs && colorSlugs.length > 0
+      ? inArray(colorsTable.slug, colorSlugs)
       : undefined,
   );
 
@@ -572,11 +591,17 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
       eq(productsTable.id, productSizesTable.productId),
     )
     .leftJoin(sizesTable, eq(sizesTable.id, productSizesTable.sizeId))
+    .leftJoin(
+      productFilesTable,
+      eq(productsTable.id, productFilesTable.productId),
+    )
+    .leftJoin(colorsTable, eq(productFilesTable.colorId, colorsTable.id))
     .orderBy(...orderBy)
-    .groupBy(productsTable.id, categoriesTable.name);
+    .groupBy(productsTable.id, categoriesTable.name)
+    .limit(pageSize);
 
   const [{ productsCount }] = await db
-    .select({ productsCount: count() })
+    .select({ productsCount: sql<number>`COUNT(DISTINCT ${productsTable.id})` })
     .from(productsTable)
     .where(searchCondition)
     .leftJoin(
@@ -584,10 +609,12 @@ export async function getAllProductsDB(config: GetAllProductsConfig) {
       eq(productsTable.id, productSizesTable.productId),
     )
     .leftJoin(sizesTable, eq(sizesTable.id, productSizesTable.sizeId))
+    .leftJoin(categoriesTable, eq(categoriesTable.id, productsTable.categoryId))
     .leftJoin(
-      categoriesTable,
-      eq(categoriesTable.id, productsTable.categoryId),
-    );
+      productFilesTable,
+      eq(productsTable.id, productFilesTable.productId),
+    )
+    .leftJoin(colorsTable, eq(productFilesTable.colorId, colorsTable.id));
 
   const pageCount = Math.ceil(productsCount / pageSize);
 

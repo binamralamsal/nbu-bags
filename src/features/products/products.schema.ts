@@ -117,13 +117,27 @@ export const newProductSchema = z.object({
     .nullable()
     .default(null)
     .describe("The category this product belongs to."),
-  images: z
-    .number()
-    .positive("Image that you uploaded is invalid.")
-    .int("Image that you uploaded is invalid.")
-    .array()
-    .max(20, { message: "You can't upload more than twenty images." })
-    .describe("Images associated with the product."),
+  images: z.array(
+    z.object({
+      fileId: z
+        .number()
+        .positive("Image that you uploaded is invalid.")
+        .int("Image that you uploaded is invalid."),
+      colorId: z
+        .number()
+        .positive("Color that you included is invalid.")
+        .int("Color that you included is invalid.")
+        .nullable()
+        .default(null),
+    }),
+  ),
+  // images: z
+  //   .number()
+  //   .positive("Image that you uploaded is invalid.")
+  //   .int("Image that you uploaded is invalid.")
+  //   .array()
+  //   .max(20, { message: "You can't upload more than twenty images." })
+  //   .describe("Images associated with the product."),
   sizes: z
     .number()
     .positive("Size that you entered is invalid.")

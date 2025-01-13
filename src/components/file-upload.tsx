@@ -1,11 +1,19 @@
 "use client";
 
-import { ChangeEvent, DragEvent, ReactNode, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ComponentProps,
+  DragEvent,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 
 import "@vidstack/react/player/styles/base.css";
@@ -40,9 +48,7 @@ import {
   FileVideoIcon,
   FolderArchive,
   LucideProps,
-  TrashIcon,
   UploadCloud,
-  XIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -75,6 +81,7 @@ type FileUploadProps = {
   maxFileSize?: FileSize;
   accept?: AcceptEntry[];
   onChange?: (files: UploadedFile[]) => void;
+  children: ReactNode;
 };
 
 type FileSize = `${number}${"mb" | "gb"}`;
@@ -89,7 +96,30 @@ const uploadFileSuccessResponseSchema = z.object({
   }),
 });
 
-export function FileUpload(props: FileUploadProps) {
+type FileUploaderContextType = {
+  uploadingFiles: UploadingFile[];
+  uploadedFiles: UploadedFile[];
+  addFiles: (files: File[]) => void;
+  cancelUpload: (file: File) => void;
+  maxFilesCount?: number;
+  deleteFile: (url: string) => void;
+  maxFileSize?: FileSize;
+  isUploadAllowed: boolean;
+  accept?: AcceptEntry[];
+  multiple: boolean;
+};
+
+const FileUploaderContext = createContext<FileUploaderContextType | null>(null);
+
+export const useFileUploader = () => {
+  const context = useContext(FileUploaderContext);
+  if (!context) {
+    throw new Error("useFileUploader must be used within a FileUploader");
+  }
+  return context;
+};
+
+export function FileUploader(props: FileUploadProps) {
   const {
     multiple = true,
     initialFiles = [],
@@ -97,6 +127,7 @@ export function FileUpload(props: FileUploadProps) {
     maxFileSize,
     accept,
     onChange,
+    children,
   } = props;
 
   const handleChange = useCallbackRef(onChange);
@@ -105,8 +136,7 @@ export function FileUpload(props: FileUploadProps) {
     throw new Error("maxFilesCount cannot be set when multiple is false");
   }
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [files, setFiles] = useState<UploadingFile[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const [uploadedFiles, setUploadedFiles] =
     useState<UploadedFile[]>(initialFiles);
   const confirm = useConfirm();
@@ -117,7 +147,7 @@ export function FileUpload(props: FileUploadProps) {
     }
   }, [uploadedFiles, handleChange]);
 
-  const hasFiles = files.length > 0 || uploadedFiles.length > 0;
+  const hasFiles = uploadingFiles.length > 0 || uploadedFiles.length > 0;
 
   const humanReadableFileTypes = accept
     ? getHumanReadableFileTypes(accept)
@@ -131,33 +161,6 @@ export function FileUpload(props: FileUploadProps) {
         ? "are"
         : "is"
       : "is";
-
-  function handleDragOver(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault();
-    setIsDragging(true);
-  }
-
-  function handleDragLeave(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault();
-    setIsDragging(false);
-  }
-
-  function handleDropOver(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault();
-    setIsDragging(false);
-
-    if (!event.dataTransfer) return;
-
-    const droppedFiles = Array.from(event.dataTransfer.files);
-    addFiles(droppedFiles);
-  }
-
-  function handleFilesSelect(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) return;
-
-    const selectedFiles = Array.from(event.target.files);
-    addFiles(selectedFiles);
-  }
 
   function addFiles(newFiles: File[]) {
     const fileObjects: UploadingFile[] = newFiles.map((file) => ({
@@ -178,7 +181,8 @@ export function FileUpload(props: FileUploadProps) {
     if (
       multiple &&
       maxFilesCount &&
-      fileObjects.length + uploadedFiles.length + files.length > maxFilesCount
+      fileObjects.length + uploadedFiles.length + uploadingFiles.length >
+        maxFilesCount
     ) {
       return toast.error(`You can't upload more than ${maxFilesCount} files`);
     }
@@ -219,7 +223,7 @@ export function FileUpload(props: FileUploadProps) {
       }
     }
 
-    setFiles((prev) => [...prev, ...fileObjects]);
+    setUploadingFiles((prev) => [...prev, ...fileObjects]);
 
     const uploadPromises = fileObjects.map(async ({ file }) => {
       const formData = new FormData();
@@ -227,7 +231,7 @@ export function FileUpload(props: FileUploadProps) {
 
       const cancelToken = new AbortController();
 
-      setFiles((prev) =>
+      setUploadingFiles((prev) =>
         prev.map((f) => (f.file === file ? { ...f, cancelToken } : f)),
       );
 
@@ -237,7 +241,7 @@ export function FileUpload(props: FileUploadProps) {
           onUploadProgress: (event) => {
             if (event.lengthComputable) {
               const percent = (event.progress || 0.5) * 100;
-              setFiles((prevFiles) =>
+              setUploadingFiles((prevFiles) =>
                 prevFiles.map((f) =>
                   f.file === file ? { ...f, progress: percent } : f,
                 ),
@@ -277,7 +281,7 @@ export function FileUpload(props: FileUploadProps) {
           throw new Error(errorMessage);
         })
         .finally(() => {
-          setFiles((prev) => prev.filter((f) => f.file !== file));
+          setUploadingFiles((prev) => prev.filter((f) => f.file !== file));
         });
     });
 
@@ -308,11 +312,11 @@ export function FileUpload(props: FileUploadProps) {
   }
 
   function cancelUpload(file: File) {
-    const fileToCancel = files.find((f) => f.file === file);
+    const fileToCancel = uploadingFiles.find((f) => f.file === file);
     if (!fileToCancel) return;
 
     fileToCancel?.cancelToken?.abort();
-    setFiles((prev) => prev.filter((f) => f.file !== file));
+    setUploadingFiles((prev) => prev.filter((f) => f.file !== file));
     // toast.success(`Cancelled uploading for '${fileToCancel.file.name}'`);
   }
 
@@ -335,109 +339,126 @@ export function FileUpload(props: FileUploadProps) {
 
   const isUploadAllowed = multiple
     ? maxFilesCount
-      ? files.length + uploadedFiles.length < maxFilesCount
+      ? uploadingFiles.length + uploadedFiles.length < maxFilesCount
       : true
     : !hasFiles;
 
   return (
-    <div>
-      {isUploadAllowed && (
-        <label
+    <FileUploaderContext.Provider
+      value={{
+        uploadingFiles,
+        uploadedFiles,
+        isUploadAllowed,
+        addFiles,
+        cancelUpload,
+        deleteFile,
+        multiple,
+        accept,
+        maxFileSize,
+        maxFilesCount,
+      }}
+    >
+      {children}
+    </FileUploaderContext.Provider>
+  );
+}
+
+export function FileUpload() {
+  const [isDragging, setIsDragging] = useState(false);
+  const {
+    isUploadAllowed,
+    addFiles,
+    multiple,
+    accept,
+    maxFileSize,
+    maxFilesCount,
+  } = useFileUploader();
+
+  if (!isUploadAllowed) return null;
+
+  function handleDragOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleDropOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+
+    if (!event.dataTransfer) return;
+
+    const droppedFiles = Array.from(event.dataTransfer.files);
+    addFiles(droppedFiles);
+  }
+
+  function handleFilesSelect(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files) return;
+
+    const selectedFiles = Array.from(event.target.files);
+    addFiles(selectedFiles);
+  }
+
+  // Todo: Remove duplicate
+  const humanReadableFileTypes = accept
+    ? getHumanReadableFileTypes(accept)
+    : [];
+
+  const wildcardTypes = ["images", "videos", "audios"];
+
+  const fileTypesBeVerb =
+    humanReadableFileTypes.length === 1
+      ? wildcardTypes.includes(humanReadableFileTypes[0])
+        ? "are"
+        : "is"
+      : "is";
+
+  return (
+    <label
+      className={cn(
+        "relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 hover:bg-gray-100",
+        isDragging && "border-primary",
+      )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDropOver}
+    >
+      <div className="text-center">
+        <div
           className={cn(
-            "relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 hover:bg-gray-100",
-            isDragging && "border-primary",
+            "mx-auto max-w-min rounded-md border p-2 transition",
+            isDragging && "border-dashed border-primary",
           )}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDropOver}
         >
-          <div className="text-center">
-            <div
-              className={cn(
-                "mx-auto max-w-min rounded-md border p-2 transition",
-                isDragging && "border-dashed border-primary",
-              )}
-            >
-              <UploadCloud size={20} />
-            </div>
-
-            <p className="mt-2 text-sm font-semibold text-gray-600">
-              Drag file{multiple ? "s" : ""}
-            </p>
-            <p className="mx-auto mt-2 max-w-[75%] text-xs text-gray-500">
-              Click to upload {maxFilesCount ? `upto ${maxFilesCount}` : ""}{" "}
-              file
-              {multiple ? "s " : " "}
-              {maxFileSize
-                ? `(files should be under ${formatFileSize(maxFileSize)})`
-                : null}
-              {accept
-                ? ` Only ${humanReadableFileTypes.join("; ")} ${fileTypesBeVerb} allowed.`
-                : null}
-            </p>
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            multiple={multiple}
-            onChange={handleFilesSelect}
-            accept={accept?.join(",")}
-          />
-        </label>
-      )}
-
-      {files.length > 0 && (
-        <div className="mt-4">
-          <p>Uploading files</p>
-          <div className="mt-2 space-y-2">
-            {files.map(({ file, preview, progress }) => (
-              <FileList key={file.name}>
-                <FileIcon
-                  fileType={file.type}
-                  name={file.name}
-                  preview={preview}
-                />
-
-                <FileName name={file.name} progress={progress} />
-                <Button
-                  onClick={() => cancelUpload(file)}
-                  size="icon"
-                  variant="destructive"
-                  type="button"
-                  className="justify-self-end"
-                >
-                  <XIcon />
-                </Button>
-              </FileList>
-            ))}
-          </div>
+          <UploadCloud size={20} />
         </div>
-      )}
 
-      {uploadedFiles.length > 0 && (
-        <div className="mt-4">
-          <p>Uploaded files</p>
-          <div className="mt-2 space-y-2">
-            {uploadedFiles.map(({ name, url, fileType }) => (
-              <FileList key={name}>
-                <FileIcon fileType={fileType} name={name} preview={url} />
-
-                <FileName name={name} />
-                <Button
-                  onClick={() => deleteFile(url)}
-                  size="icon"
-                  variant="destructive"
-                  type="button"
-                  className="justify-self-end"
-                >
-                  <TrashIcon />
-                </Button>
-              </FileList>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+        <p className="mt-2 text-sm font-semibold text-gray-600">
+          Drag file{multiple ? "s" : ""}
+        </p>
+        <p className="mx-auto mt-2 max-w-[75%] text-xs text-gray-500">
+          Click to upload {maxFilesCount ? `upto ${maxFilesCount}` : ""} file
+          {multiple ? "s " : " "}
+          {maxFileSize
+            ? `(files should be under ${formatFileSize(maxFileSize)})`
+            : null}
+          {accept
+            ? ` Only ${humanReadableFileTypes.join("; ")} ${fileTypesBeVerb} allowed.`
+            : null}
+        </p>
+      </div>
+      <input
+        type="file"
+        className="hidden"
+        multiple={multiple}
+        onChange={handleFilesSelect}
+        accept={accept?.join(",")}
+      />
+    </label>
   );
 }
 
@@ -569,7 +590,7 @@ function getFileIcon(IconComponent: React.ComponentType<LucideProps>) {
   );
 }
 
-function FileIcon({
+export function FileIcon({
   fileType,
   name,
   preview,
@@ -615,15 +636,21 @@ function FileIcon({
   }
 }
 
-function FileList(props: { children: ReactNode }) {
+export function FileList(props: ComponentProps<"div">) {
+  const { className, ...rest } = props;
+
   return (
-    <div className="grid grid-cols-[40px,6fr,1fr] items-center gap-2">
-      {props.children}
-    </div>
+    <div
+      className={cn(
+        "grid grid-cols-[40px,6fr,1fr] items-center gap-2",
+        className,
+      )}
+      {...rest}
+    />
   );
 }
 
-function FileName(props: { name: string; progress?: number }) {
+export function FileName(props: { name: string; progress?: number }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-sm text-muted-foreground">

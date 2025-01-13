@@ -167,6 +167,10 @@ export const productFilesTable = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    colorId: integer("color_id").references(() => colorsTable.id, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.productId, t.fileId] }),
@@ -184,7 +188,6 @@ export const uploadedFilesTable = pgTable("uploaded_files", {
 export const productsRelations = relations(productsTable, ({ many, one }) => ({
   productsToFiles: many(productFilesTable),
   productToSizes: many(productSizesTable),
-  colors: many(colorsTable),
   category: one(categoriesTable, {
     fields: [productsTable.categoryId],
     references: [categoriesTable.id],
@@ -196,12 +199,11 @@ export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
 }));
 
 export const sizesRelations = relations(sizesTable, ({ many }) => ({
-  products: many(productsTable),
   productToSizes: many(productSizesTable),
 }));
 
 export const colorsRelations = relations(colorsTable, ({ many }) => ({
-  products: many(productsTable),
+  productsToFiles: many(productFilesTable),
 }));
 
 export const uploadedFilesRelations = relations(
@@ -235,6 +237,10 @@ export const productFilesRelations = relations(
     file: one(uploadedFilesTable, {
       fields: [productFilesTable.fileId],
       references: [uploadedFilesTable.id],
+    }),
+    color: one(colorsTable, {
+      fields: [productFilesTable.colorId],
+      references: [colorsTable.id],
     }),
   }),
 );
