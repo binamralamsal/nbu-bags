@@ -16,8 +16,8 @@ export function SiteFooter() {
         <div className="space-y-4 md:max-w-[30ch] lg:space-y-6">
           <h2 className="text-3xl font-bold">NBU Bags</h2>
           <p className="text-secondary-foreground/80">
-            A Bootstrap theme that&apos;s both stylish and functional, perfect
-            for any type of technology or corporate website.
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempore,
+            maiores?
           </p>
         </div>
         <div className="space-y-4 lg:space-y-6">
@@ -26,7 +26,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Home
               </Link>
@@ -34,7 +34,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 About
               </Link>
@@ -42,7 +42,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Services
               </Link>
@@ -50,7 +50,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Courses
               </Link>
@@ -58,7 +58,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Contact
               </Link>
@@ -66,7 +66,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Career
               </Link>
@@ -74,7 +74,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Become a Partner
               </Link>
@@ -87,7 +87,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Home
               </Link>
@@ -95,7 +95,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 About
               </Link>
@@ -103,7 +103,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Services
               </Link>
@@ -111,7 +111,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Courses
               </Link>
@@ -119,7 +119,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Contact
               </Link>
@@ -127,7 +127,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Career
               </Link>
@@ -135,7 +135,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-primary/100 hover:brightness-[2.5]"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Become a Partner
               </Link>

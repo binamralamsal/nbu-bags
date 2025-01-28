@@ -1,13 +1,16 @@
-import { AdminPageWrapper } from "@/components/admin-page-wrapper";
+import { redirect } from "next/navigation";
 
-import { ensureAdmin } from "@/features/auth/server/auth.query";
+// import { AdminPageWrapper } from "@/components/admin-page-wrapper";
+
+// import { ensureAdmin } from "@/features/auth/server/auth.query";
 
 export default async function AdminDashboard() {
-  await ensureAdmin({ redirect: true });
+  // await ensureAdmin({ redirect: true });
+  return redirect("/admin/products");
 
-  return (
-    <AdminPageWrapper pageTitle="Home">
-      <div></div>
-    </AdminPageWrapper>
-  );
+  // return (
+  //   <AdminPageWrapper pageTitle="Home">
+  //     <div></div>
+  //   </AdminPageWrapper>
+  // );
 }
