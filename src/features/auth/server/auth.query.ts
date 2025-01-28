@@ -6,13 +6,18 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
+  GetAllUsersConfig,
+  getAllUsersDB,
+  getUserDB,
+  getUserFromAccessToken,
+} from "./auth.services";
+
+import {
   ACCESS_TOKEN_KEY,
   REDIRECT_URL_IF_AUTHORIZED,
   REDIRECT_URL_IF_UNAUTHORIZED,
 } from "@/configs/constants";
 import { UnauthorizedError } from "@/errors/unauthorized-error";
-
-import { getUserFromAccessToken } from "./auth.services";
 
 export const getCurrentUser = cache(async () => {
   const cookieStore = await cookies();
@@ -53,3 +58,13 @@ export async function ensureAdmin(config = { redirect: false }) {
 
   return currentUser;
 }
+
+export const getAllUsers = cache(async (config: GetAllUsersConfig) => {
+  await ensureAdmin({ redirect: true });
+  return await getAllUsersDB(config);
+});
+
+export const getUser = cache(async (id: number) => {
+  await ensureAdmin({ redirect: true });
+  return await getUserDB(id);
+});

@@ -5,6 +5,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { deleteUserAction } from "../server/auth.actions";
+
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import {
   AlertDialog,
@@ -16,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,21 +36,22 @@ import {
 } from "@/components/ui/tooltip";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, ShieldIcon, UserIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteCategoryAction } from "@/features/products/server/products.actions";
+import { roles } from "@/configs/constants";
 
-export type Category = {
+export type User = {
   id: number;
   name: string;
-  slug: string;
+  email: string;
+  role: (typeof roles)[number];
   createdAt: Date;
   updatedAt: Date;
 };
-export type CategoriesAllowedKeys = keyof Category;
+export type UsersAllowedKeys = keyof User;
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -61,9 +65,25 @@ export const columns: ColumnDef<Category>[] = [
     ),
   },
   {
-    accessorKey: "slug",
+    accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Slug" />
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Role" />
+    ),
+    cell: ({ row }) => (
+      <Badge className="inline-flex gap-1 py-1 capitalize">
+        {row.original.role === "admin" ? (
+          <ShieldIcon className="h-4 w-4" />
+        ) : (
+          <UserIcon className="h-4 w-4" />
+        )}
+        <span>{row.original.role}</span>
+      </Badge>
     ),
   },
   {
@@ -105,18 +125,17 @@ export const columns: ColumnDef<Category>[] = [
   {
     id: "actions",
     cell: function CellComponent({ row }) {
-      const category = row.original;
+      const user = row.original;
 
       const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
       const [actionsDropdownOpened, setActionsDropdownOpened] = useState(false);
       const router = useRouter();
 
-      async function handleDeleteCategory() {
-        const response = await deleteCategoryAction(row.original.id);
+      async function handleDeleteUser() {
+        const response = await deleteUserAction(row.original.id);
 
         if (response.status === "SUCCESS") {
           toast.success(response.message);
-
           router.refresh();
         } else {
           toast.error(response.message);
@@ -141,9 +160,7 @@ export const columns: ColumnDef<Category>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/admin/products/categories/edit/${category.id}`}>
-                Edit
-              </Link>
+              <Link href={`/admin/users/edit/${user.id}`}>Edit</Link>
             </DropdownMenuItem>
             <AlertDialog
               open={deleteDialogOpened}
@@ -161,7 +178,7 @@ export const columns: ColumnDef<Category>[] = [
                     <strong>
                       {row.original.name} #{row.original.id}
                     </strong>{" "}
-                    category?
+                    user?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete{" "}
@@ -173,7 +190,7 @@ export const columns: ColumnDef<Category>[] = [
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <Button variant="destructive" onClick={handleDeleteCategory}>
+                  <Button variant="destructive" onClick={handleDeleteUser}>
                     Delete
                   </Button>
                 </AlertDialogFooter>

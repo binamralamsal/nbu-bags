@@ -32,6 +32,8 @@ export const usersTable = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
+export type UsersTableSelectType = typeof usersTable.$inferSelect;
+
 export const emailsTable = pgTable(
   "emails",
   {

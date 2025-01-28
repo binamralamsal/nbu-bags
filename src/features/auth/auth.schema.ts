@@ -51,6 +51,36 @@ export const registerUserSchema = z.object({
 });
 export type RegisterUserSchema = z.infer<typeof registerUserSchema>;
 
+export const newUserSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  password: newPasswordSchema,
+  role: z.enum(roles).default(defaultRole),
+});
+export type NewUserSchema = z.infer<typeof newUserSchema>;
+
+export const updateUserSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  password: newPasswordSchema.optional(),
+  role: z.enum(roles).default(defaultRole),
+});
+export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+
+export const newUserClientSchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: newPasswordSchema,
+    confirmPassword: newPasswordSchema,
+    role: z.enum(roles).default(defaultRole),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+export type NewUserClientSchema = z.infer<typeof newUserClientSchema>;
+
 export const refreshTokenSchema = z.object({
   sessionToken: z.string().min(1, { message: "Session token is required." }),
 });

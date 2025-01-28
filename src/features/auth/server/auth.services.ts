@@ -2,8 +2,10 @@ import "server-only";
 
 import { cookies, headers } from "next/headers";
 
+import { accessTokenSchema, refreshTokenSchema } from "../auth.schema";
+
 import argon2 from "argon2";
-import { eq } from "drizzle-orm";
+import { asc, count, desc, eq, ilike } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { DatabaseError } from "pg";
 
@@ -18,10 +20,13 @@ import { env } from "@/configs/env";
 import { InternalServerError } from "@/errors/internal-server-error";
 import { UnauthorizedError } from "@/errors/unauthorized-error";
 import { db } from "@/libs/drizzle";
-import { emailsTable, sessionsTable, usersTable } from "@/libs/drizzle/schema";
+import {
+  UsersTableSelectType,
+  emailsTable,
+  sessionsTable,
+  usersTable,
+} from "@/libs/drizzle/schema";
 import { getIP } from "@/utils/get-ip";
-
-import { accessTokenSchema, refreshTokenSchema } from "../auth.schema";
 
 function hashPassword(password: string) {
   return argon2.hash(password);
@@ -35,6 +40,7 @@ export async function registerUserDB(data: {
   email: string;
   name: string;
   password: string;
+  role?: "admin" | "user";
 }) {
   const hashedPassword = await hashPassword(data.password);
 
@@ -45,6 +51,7 @@ export async function registerUserDB(data: {
         .values({
           name: data.name,
           password: hashedPassword,
+          role: data.role,
         })
         .returning({ userId: usersTable.id, role: usersTable.role });
 
@@ -54,6 +61,51 @@ export async function registerUserDB(data: {
       });
 
       return { userId, name: data.name, email: data.email, role };
+    });
+  } catch (err) {
+    if (err instanceof DatabaseError && err.code === "23505") {
+      throw new Error("User with that email address already exists");
+    }
+
+    throw new InternalServerError();
+  }
+}
+
+export async function updateUserDB(
+  userId: number,
+  data: {
+    email: string;
+    name: string;
+    password?: string;
+    role?: "admin" | "user";
+  },
+) {
+  const hashedPassword = data.password
+    ? await hashPassword(data.password)
+    : undefined;
+
+  try {
+    return await db.transaction(async (tx) => {
+      await tx
+        .update(usersTable)
+        .set({
+          name: data.name,
+          role: data.role,
+          password: hashedPassword,
+        })
+        .where(eq(usersTable.id, userId));
+
+      await tx
+        .update(emailsTable)
+        .set({ email: data.email })
+        .where(eq(emailsTable.userId, userId));
+
+      return {
+        userId: userId,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+      };
     });
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {
@@ -253,5 +305,81 @@ export async function logoutUserDB(rawRefreshToken: string) {
     cookieStore.delete(ACCESS_TOKEN_KEY);
   } catch {
     throw new UnauthorizedError();
+  }
+}
+
+export type GetAllUsersConfig = {
+  page: number;
+  pageSize: number;
+  search?: string;
+  sort?: Partial<Record<"id" | "name" | "role" | "createdAt", "asc" | "desc">>;
+};
+
+export async function getAllUsersDB(config: GetAllUsersConfig) {
+  const { page, pageSize, search, sort } = config;
+  const offset = (page - 1) * pageSize;
+
+  const searchCondition = search
+    ? ilike(usersTable.name, `%${search}%`)
+    : undefined;
+
+  const orderBy = sort
+    ? Object.entries(sort).map(([key, direction]) =>
+        direction === "desc"
+          ? desc(usersTable[key as keyof UsersTableSelectType])
+          : asc(usersTable[key as keyof UsersTableSelectType]),
+      )
+    : [desc(usersTable.createdAt)];
+
+  const users = await db
+    .select({
+      id: usersTable.id,
+      name: usersTable.name,
+      role: usersTable.role,
+      email: emailsTable.email,
+      createdAt: usersTable.createdAt,
+      updatedAt: usersTable.updatedAt,
+    })
+    .from(usersTable)
+    .offset(offset)
+    .where(searchCondition)
+    .orderBy(...orderBy)
+    .innerJoin(emailsTable, eq(emailsTable.userId, usersTable.id));
+
+  const [{ usersCount }] = await db
+    .select({ usersCount: count() })
+    .from(usersTable)
+    .where(searchCondition);
+
+  const pageCount = Math.ceil(usersCount / pageSize);
+
+  return {
+    users,
+    pageCount,
+  };
+}
+
+export async function getUserDB(id: number) {
+  const [user] = await db
+    .select({
+      id: usersTable.id,
+      name: usersTable.name,
+      role: usersTable.role,
+      email: emailsTable.email,
+      createdAt: usersTable.createdAt,
+      updatedAt: usersTable.updatedAt,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.id, id))
+    .innerJoin(emailsTable, eq(emailsTable.userId, usersTable.id));
+
+  return user;
+}
+
+export async function deleteUserDB(id: number) {
+  try {
+    await db.delete(usersTable).where(eq(usersTable.id, id));
+  } catch {
+    throw new InternalServerError();
   }
 }
