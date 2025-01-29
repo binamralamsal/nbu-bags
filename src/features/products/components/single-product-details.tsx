@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import Link from "next/link";
 
+import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -92,9 +93,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
             {product.name}
           </h2>
         </div>
-
         <Separator />
-
         <div className="text-xl text-gray-700">
           {product.salePrice ? (
             <s className="text-gray-500">
@@ -110,7 +109,6 @@ export function SingleProductDetails({ product }: { product: Product }) {
             </span>
           )}
         </div>
-
         {product.sizes.length > 0 && (
           <div className="flex gap-1">
             <h3 className="font-semibold">Sizes: </h3>
@@ -119,7 +117,6 @@ export function SingleProductDetails({ product }: { product: Product }) {
             </span>
           </div>
         )}
-
         {colors.length > 0 && (
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">Colors: </h3>
@@ -136,10 +133,17 @@ export function SingleProductDetails({ product }: { product: Product }) {
             </div>
           </div>
         )}
-
         <p>{product.description}</p>
-
-        <Button size="lg">Contact for Buying</Button>
+        <Button size="xl" asChild>
+          <Link
+            href={`https://wa.me/9779767489387?text=${encodeURIComponent(
+              `I am interested to buy ${product.name}\n\nhttps://nbubags.com/products/${product.slug}`,
+            )}`}
+          >
+            <WhatsappIcon className="fill-white" />
+            <span>WhatsApp for Buying</span>
+          </Link>
+        </Button>
       </div>
     </>
   );
