@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import Link from "next/link";
 
+import { InstagramIcon } from "@/components/icons/instagram-icon";
 import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -70,6 +71,11 @@ export function SingleProductDetails({ product }: { product: Product }) {
     }
   }
 
+  const host = window.location.origin;
+  const messageToBeShared = encodeURIComponent(
+    `I am interested to buy ${product.name}\n\n${host}/${product.slug}`,
+  );
+
   return (
     <>
       <ProductImagesGallery
@@ -134,16 +140,34 @@ export function SingleProductDetails({ product }: { product: Product }) {
           </div>
         )}
         <p>{product.description}</p>
-        <Button size="xl" asChild>
-          <Link
-            href={`https://wa.me/9779767489387?text=${encodeURIComponent(
-              `I am interested to buy ${product.name}\n\nhttps://nbubags.com/products/${product.slug}`,
-            )}`}
+        <div className="flex gap-2">
+          <Button
+            size="lg"
+            asChild
+            className="bg-green-500 transition duration-200 hover:bg-green-600"
           >
-            <WhatsappIcon className="fill-white" />
-            <span>WhatsApp for Buying</span>
-          </Link>
-        </Button>
+            <Link
+              href={`https://wa.me/9779767489387?text=${messageToBeShared}`}
+              target="_blank"
+            >
+              <WhatsappIcon className="fill-white" />
+              <span>WhatsApp for Buying</span>
+            </Link>
+          </Button>
+          <Button
+            size="lg"
+            asChild
+            className="bg-red-500 transition duration-200 hover:bg-red-600"
+          >
+            <Link
+              href={`https://ig.me/m/carry.karma?text=${messageToBeShared}`}
+              target="_blank"
+            >
+              <InstagramIcon className="fill-white" />
+              <span>Instagram for Buying</span>
+            </Link>
+          </Button>
+        </div>
       </div>
     </>
   );
