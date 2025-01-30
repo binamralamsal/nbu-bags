@@ -1,8 +1,10 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 import {
-  ArrowRightIcon,
   LockIcon,
+  MoveRightIcon,
   RefreshCcwIcon,
   TagIcon,
   TruckIcon,
@@ -23,55 +25,11 @@ export default async function Home() {
   return (
     <main>
       <section className="grid md:grid-cols-2 lg:grid-cols-3">
-        <a
-          href="#"
+        <Link
+          href="/products?categories=kids"
           className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
         >
-          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/women.jpg')] bg-cover brightness-75 transition duration-300 group-hover:brightness-[0.6]"></div>
-          <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Women
-          </div>
-
-          <Button
-            variant="secondary"
-            size="lg"
-            className="absolute bottom-10 font-semibold"
-            asChild
-          >
-            <div>
-              <span>Shop Women</span>
-              <ArrowRightIcon className="transition duration-300 group-hover:translate-x-1" />
-            </div>
-          </Button>
-        </a>
-
-        <a
-          href="#"
-          className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
-        >
-          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/men.jpg')] bg-cover brightness-75 transition duration-300 group-hover:brightness-[0.6]"></div>
-          <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Men
-          </div>
-
-          <Button
-            variant="secondary"
-            size="lg"
-            className="absolute bottom-10 font-semibold"
-            asChild
-          >
-            <div>
-              <span>Shop Men</span>
-              <ArrowRightIcon className="transition duration-300 group-hover:translate-x-1" />
-            </div>
-          </Button>
-        </a>
-
-        <a
-          href="#"
-          className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
-        >
-          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/kids.jpg')] bg-cover brightness-90 transition duration-300 group-hover:brightness-[0.8]"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/kids.jpg')] bg-cover brightness-75 transition duration-300 group-hover:brightness-[0.6]"></div>
           <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Kids
           </div>
@@ -84,10 +42,54 @@ export default async function Home() {
           >
             <div>
               <span>Shop Kids</span>
-              <ArrowRightIcon className="transition duration-300 group-hover:translate-x-1" />
+              <MoveRightIcon className="transition duration-300 group-hover:translate-x-1" />
             </div>
           </Button>
-        </a>
+        </Link>
+
+        <Link
+          href="/products?categories=fashion"
+          className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
+        >
+          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/fashion.jpg')] bg-cover brightness-75 transition duration-300 group-hover:brightness-[0.6]"></div>
+          <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+            Fashion
+          </div>
+
+          <Button
+            variant="secondary"
+            size="lg"
+            className="absolute bottom-10 font-semibold"
+            asChild
+          >
+            <div>
+              <span>Shop Fashion</span>
+              <MoveRightIcon className="transition duration-300 group-hover:translate-x-1" />
+            </div>
+          </Button>
+        </Link>
+
+        <Link
+          href="/products?categories=side-bags"
+          className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
+        >
+          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/side-bags.jpg')] bg-cover bg-center brightness-90 transition duration-300 group-hover:brightness-[0.8]"></div>
+          <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+            Side bags
+          </div>
+
+          <Button
+            variant="secondary"
+            size="lg"
+            className="absolute bottom-10 font-semibold"
+            asChild
+          >
+            <div>
+              <span>Shop Side bags</span>
+              <MoveRightIcon className="transition duration-300 group-hover:translate-x-1" />
+            </div>
+          </Button>
+        </Link>
       </section>
 
       <section>
@@ -197,7 +199,7 @@ export default async function Home() {
 
             <Button className="group justify-self-start" size="lg">
               <span>Shop Now</span>
-              <ArrowRightIcon className="transition duration-300 group-hover:translate-x-1" />
+              <MoveRightIcon className="transition duration-300 group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
