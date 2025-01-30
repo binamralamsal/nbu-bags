@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { Button } from "./ui/button";
+
 import { navLinks } from "@/configs/site";
 import { cn } from "@/utils/cn";
-
-import { Button } from "./ui/button";
 
 export function DesktopNav() {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ export function DesktopNav() {
               <Button
                 variant="link"
                 className={cn(
-                  "p-4 text-sm transition-all ease-in-out hover:text-primary",
+                  "p-4 text-sm text-foreground transition-all ease-in-out hover:text-primary",
                   pathname === navLink.href && "font-medium text-primary",
                 )}
                 asChild
