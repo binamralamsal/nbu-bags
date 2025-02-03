@@ -98,7 +98,7 @@ export default async function Home() {
             <TruckIcon className="h-5 w-5 text-primary" />
             <div className="text-sm">
               <h2 className="font-semibold capitalize">Free Shipping</h2>
-              <p className="text-muted-foreground">From all orders over $100</p>
+              <p className="text-muted-foreground">Inside Kathmandu Valley</p>
             </div>
           </div>
 

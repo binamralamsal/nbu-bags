@@ -71,7 +71,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
     }
   }
 
-  const host = window.location.origin;
+  const host = window?.location.origin;
   const messageToBeShared = encodeURIComponent(
     `I am interested to buy ${product.name}\n\n${host}/${product.slug}`,
   );
