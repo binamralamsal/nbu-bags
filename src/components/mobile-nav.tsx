@@ -35,9 +35,9 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left">
         <SheetHeader>
-          <SheetTitle>
-            {site.name}
+          <SheetTitle className="flex items-center gap-2 text-lg font-bold text-secondary">
             <Logo className="h-8" />
+            {site.name}
           </SheetTitle>
         </SheetHeader>
 

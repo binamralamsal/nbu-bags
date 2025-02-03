@@ -6,7 +6,7 @@ export const navLinks: { label: string; href: string }[] = [
 ];
 
 export const site = {
-  name: "NBU Bags",
+  name: "NBU BAGS",
   version: "1.0.0",
   description: "Fashionable bags",
 };

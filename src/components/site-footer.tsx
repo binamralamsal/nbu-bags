@@ -9,15 +9,19 @@ import {
   TwitterIcon,
 } from "lucide-react";
 
-export function SiteFooter() {
+import { getAllCategories } from "@/features/products/server/products.query";
+
+export async function SiteFooter() {
+  const { categories } = await getAllCategories({ page: 1, pageSize: 10 });
+
   return (
     <footer className="bg-secondary pt-16 text-secondary-foreground md:pt-20 lg:pt-24">
       <div className="container grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-[2fr,1fr,1fr,1fr]">
         <div className="space-y-4 md:max-w-[30ch] lg:space-y-6">
           <h2 className="text-3xl font-bold">NBU Bags</h2>
           <p className="text-secondary-foreground/80">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempore,
-            maiores?
+            Where quality meets innovation. We design durable, stylish bags for
+            every lifestyle, including backpacks, travel bags, and laptop bags.
           </p>
         </div>
         <div className="space-y-4 lg:space-y-6">
@@ -25,10 +29,18 @@ export function SiteFooter() {
           <ul className="space-y-2">
             <li>
               <Link
-                href="#"
+                href="/"
                 className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
                 Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/products"
+                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
+              >
+                Products
               </Link>
             </li>
             <li>
@@ -44,102 +56,24 @@ export function SiteFooter() {
                 href="#"
                 className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
               >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Courses
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
                 Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/#"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Career
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Become a Partner
               </Link>
             </li>
           </ul>
         </div>
         <div className="space-y-4 lg:space-y-6">
-          <h2 className="text-xl font-bold">Community</h2>
+          <h2 className="text-xl font-bold">Categories</h2>
           <ul className="space-y-2">
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Courses
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Career
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
-              >
-                Become a Partner
-              </Link>
-            </li>
+            {categories.map((category) => (
+              <li key={category.id}>
+                <Link
+                  href={`/products?categories=${category.slug}`}
+                  className="font-medium text-secondary-foreground/80 transition hover:text-secondary-foreground"
+                >
+                  {category.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="space-y-4 lg:space-y-6">

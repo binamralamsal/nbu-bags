@@ -8,6 +8,7 @@ import { DesktopNav } from "./desktop-nav";
 import { Logo } from "./icons/logo";
 import { MobileNav } from "./mobile-nav";
 
+import { site } from "@/configs/site";
 import { cn } from "@/utils/cn";
 
 export function SiteHeader() {
@@ -36,8 +37,12 @@ export function SiteHeader() {
       )}
     >
       <div className="container flex items-center justify-between">
-        <Link href="/">
-          <Logo className="h-12 text-secondary" />
+        <Link
+          href="/"
+          className="flex items-center gap-1 text-xl font-bold text-secondary lg:text-2xl"
+        >
+          <Logo className="h-10 lg:h-12" />
+          <span>{site.name}</span>
         </Link>
 
         <DesktopNav />
