@@ -105,9 +105,9 @@ export default async function Home() {
           <div className="flex gap-3">
             <RefreshCcwIcon className="h-5 w-5 text-primary" />
             <div className="text-sm">
-              <h2 className="font-semibold capitalize">Free Returns</h2>
+              <h2 className="font-semibold capitalize">Easy Exchange</h2>
               <p className="text-muted-foreground">
-                Return money within 30 days
+                Exchange your item within 7 days
               </p>
             </div>
           </div>
