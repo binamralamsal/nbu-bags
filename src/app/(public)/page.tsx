@@ -70,12 +70,12 @@ export default async function Home() {
         </Link>
 
         <Link
-          href="/products?categories=side-bags"
+          href="/products?categories=adventure"
           className="group relative grid place-items-center gap-2 py-40 transition md:py-48 lg:py-52"
         >
-          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/side-bags.jpg')] bg-cover bg-center brightness-90 transition duration-300 group-hover:brightness-[0.8]"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-[url('/adventure.jpg')] bg-cover bg-center brightness-90 transition duration-300 group-hover:brightness-[0.8]"></div>
           <div className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Side bags
+            Adventure
           </div>
 
           <Button
@@ -85,7 +85,7 @@ export default async function Home() {
             asChild
           >
             <div>
-              <span>Shop Side bags</span>
+              <span>Shop Adventure</span>
               <MoveRightIcon className="transition duration-300 group-hover:translate-x-1" />
             </div>
           </Button>
