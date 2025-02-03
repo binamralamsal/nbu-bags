@@ -152,7 +152,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-[url('/cover-4.jpg')] bg-center md:bg-cover">
+      <section className="bg-[url('/cover-4.png')] bg-center md:bg-cover">
         <div className="container grid py-14 md:grid-cols-2 md:py-24 lg:py-32">
           <div></div>
           <div className="grid gap-4 md:gap-6 lg:gap-8">
