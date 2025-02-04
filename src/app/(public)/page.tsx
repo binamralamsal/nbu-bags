@@ -115,15 +115,17 @@ export default async function Home() {
           <div className="flex gap-3">
             <LockIcon className="h-5 w-5 text-primary" />
             <div className="text-sm">
-              <h2 className="font-semibold capitalize">Secure Shopping</h2>
-              <p className="text-muted-foreground">You&apos;re in safe hands</p>
+              <h2 className="font-semibold capitalize">Easy Repair</h2>
+              <p className="text-muted-foreground">
+                Get 1 year free repair service
+              </p>
             </div>
           </div>
 
           <div className="flex gap-3">
             <TagIcon className="h-5 w-5 text-primary" />
             <div className="text-sm">
-              <h2 className="font-semibold capitalize">Over 10,000 Styles</h2>
+              <h2 className="font-semibold capitalize">Over 1,000 Styles</h2>
               <p className="text-muted-foreground">
                 We have everything you need
               </p>
@@ -157,7 +159,7 @@ export default async function Home() {
           <div></div>
           <div className="grid gap-4 md:gap-6 lg:gap-8">
             <h2 className="max-w-[15ch] text-3xl font-bold leading-tight tracking-tighter lg:text-4xl">
-              Get -50% from Summer Collection
+              Get 10% to 50% off on all products
             </h2>
             <div className="flex flex-wrap gap-2 lg:gap-4">
               <div className="text-center">

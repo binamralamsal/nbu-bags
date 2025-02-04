@@ -105,7 +105,7 @@ export default async function ProductsPage({
           colors={colors}
         />
       </div>
-      <div className="py-4">
+      <div>
         <h2 className="text-2xl font-bold md:text-3xl">Products</h2>
 
         <div className="mt-2 grid gap-6 md:mt-4 md:grid-cols-1 md:gap-8 lg:mt-8 lg:grid-cols-2 xl:grid-cols-3">

@@ -2,12 +2,7 @@ import Link from "next/link";
 
 import { Button } from "./ui/button";
 
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  TwitterIcon,
-} from "lucide-react";
+import { FacebookIcon, InstagramIcon } from "lucide-react";
 
 import { getAllCategories } from "@/features/products/server/products.query";
 
@@ -84,8 +79,14 @@ export async function SiteFooter() {
                 variant="secondary"
                 size="icon"
                 className="brightness-125 transition hover:brightness-200"
+                asChild
               >
-                <FacebookIcon className="h-4 w-4 fill-secondary-foreground" />
+                <Link
+                  href="https://www.facebook.com/people/NBU-BAGS/61567289293320/"
+                  target="_blank"
+                >
+                  <FacebookIcon className="h-4 w-4 fill-secondary-foreground" />
+                </Link>
               </Button>
             </li>
             <li>
@@ -93,11 +94,14 @@ export async function SiteFooter() {
                 variant="secondary"
                 size="icon"
                 className="brightness-125 transition hover:brightness-200"
+                asChild
               >
-                <InstagramIcon className="h-4 w-4" />
+                <Link href="https://www.instagram.com/nbu_bags" target="_blank">
+                  <InstagramIcon className="h-4 w-4" />
+                </Link>
               </Button>
             </li>
-            <li>
+            {/* <li>
               <Button
                 variant="secondary"
                 size="icon"
@@ -114,7 +118,7 @@ export async function SiteFooter() {
               >
                 <LinkedinIcon className="h-4 w-4 fill-secondary-foreground" />
               </Button>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>

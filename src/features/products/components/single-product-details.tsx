@@ -140,33 +140,38 @@ export function SingleProductDetails({ product }: { product: Product }) {
           </div>
         )}
         <p>{product.description}</p>
-        <div className="grid gap-2 lg:grid-cols-2">
-          <Button
-            size="lg"
-            asChild
-            className="bg-green-500 transition duration-200 hover:bg-green-600"
-          >
-            <Link
-              href={`https://wa.me/9779767489387?text=${messageToBeShared}`}
-              target="_blank"
+        <div className="grid gap-1">
+          <p className="italic text-muted-foreground">
+            Distributed by Carry Karma
+          </p>
+          <div className="grid gap-2 lg:grid-cols-2">
+            <Button
+              size="lg"
+              asChild
+              className="bg-green-500 transition duration-200 hover:bg-green-600"
             >
-              <WhatsappIcon className="fill-white" />
-              <span>WhatsApp for Buying</span>
-            </Link>
-          </Button>
-          <Button
-            size="lg"
-            asChild
-            className="bg-red-500 transition duration-200 hover:bg-red-600"
-          >
-            <Link
-              href={`https://ig.me/m/carry.karma?text=${messageToBeShared}`}
-              target="_blank"
+              <Link
+                href={`https://wa.me/9779767489387?text=${messageToBeShared}`}
+                target="_blank"
+              >
+                <WhatsappIcon className="fill-white" />
+                <span>WhatsApp for Buying</span>
+              </Link>
+            </Button>
+            <Button
+              size="lg"
+              asChild
+              className="bg-red-500 transition duration-200 hover:bg-red-600"
             >
-              <InstagramIcon className="fill-white" />
-              <span>Instagram for Buying</span>
-            </Link>
-          </Button>
+              <Link
+                href={`https://ig.me/m/carry.karma?text=${messageToBeShared}`}
+                target="_blank"
+              >
+                <InstagramIcon className="fill-white" />
+                <span>Instagram for Buying</span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </>

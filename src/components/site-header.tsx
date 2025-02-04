@@ -41,7 +41,7 @@ export function SiteHeader() {
           href="/"
           className="flex items-center gap-1 text-xl font-bold text-secondary lg:text-2xl"
         >
-          <Logo className="h-10 lg:h-12" />
+          <Logo className={cn("h-10 lg:h-12", scrolled && "lg:h-10")} />
           <span>{site.name}</span>
         </Link>
 
