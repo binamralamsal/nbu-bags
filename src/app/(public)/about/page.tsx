@@ -2,32 +2,33 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from "@/components/ui/carousel";
 
 import { ChevronRightIcon } from "lucide-react";
 
 import { site } from "@/configs/site";
 
-const team = [
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-  { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-];
+// const team = [
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
+// ];
 
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-secondary/10">
+      <section className="bg-primary/10">
         <div className="container grid gap-4 py-10 md:grid-cols-[3fr,2fr] md:py-14 lg:py-16">
           <div className="space-y-4">
             <h2 className="text-balance text-2xl font-bold tracking-tighter md:text-3xl lg:text-4xl">
@@ -86,12 +87,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-secondary/10">
+      <section className="bg-primary/10">
         <div className="container grid items-center gap-8 py-16 md:gap-10 md:py-20 lg:grid-cols-2 lg:gap-20 lg:py-24">
           <div className="relative">
             <Image
               className="w-full rounded-3xl"
-              src="/founder.jpg"
+              src="/kishan.jpg"
               alt="Founder"
               height={400}
               width={400}
@@ -103,29 +104,156 @@ export default function AboutPage() {
             </h2>
 
             <p className="max-w-[56ch] text-balance">
-              At NBU Bags, we are dedicated to crafting stylish, high-quality,
-              and functional bags for every occasion. Our collection combines
-              timeless elegance with modern trends, ensuring a perfect match for
-              your lifestyle.
+              Since 2002, we&apos;ve grown from a humble beginning with just 5
+              machines to a state-of-the-art production line with 108 machines.
+              Our mission has always been simple: to craft the perfect backpack,
+              backed by a 1-year warranty for your peace of mind.
             </p>
             <p className="max-w-[56ch] text-balance">
-              We also prioritize a seamless shopping experience with secure
-              transactions, easy navigation, and responsive customer support. At
-              NBU Bags, every bag is more than an accessory—it’s a statement of
-              style and confidence.
+              The early days in the wholesale market were challenging, but our
+              commitment to quality and customer satisfaction pushed us forward.
+              Now, we&apos;re excited to bring our exceptional bags directly to
+              you, reaching customers worldwide through our digital platforms.
+            </p>
+            <p className="max-w-[50ch]">
+              Join us on this journey—because every adventure deserves the
+              perfect bag.
             </p>
 
             <div className="flex items-center gap-4">
               <Image
                 className="h-16 w-16 rounded-full object-cover"
-                src="/founder.jpg"
+                src="/kishan.jpg"
                 alt="Founder"
                 height={20}
                 width={20}
               />
               <div>
+                <strong className="text-lg">Kisan prasad Timalsina</strong>
+                <p>CEO</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="container grid items-center gap-8 py-16 md:gap-10 md:py-20 lg:grid-cols-2 lg:gap-20 lg:py-24">
+          <div className="space-y-6 lg:space-y-8">
+            <h2 className="max-w-[20ch] text-balance text-3xl font-bold tracking-tighter md:text-4xl lg:text-5xl">
+              Elevate Your Journey: Discover Exceptional Bags
+            </h2>
+
+            <p className="max-w-[56ch] text-balance">
+              As the son of the founder and Managing Director of our company,
+              I’ve had the privilege of witnessing our journey from the very
+              beginning. Born in 2004, I grew up watching our company flourish
+              in the wholesale market. At the time of my birth, we operated with
+              just 10 to 15 machines. Today, I’m proud to say we’ve expanded to
+              over 108 machines, a testament to our hard work and dedication.
+            </p>
+            <p className="max-w-[56ch] text-balance">
+              Our main goal has always been—and continues to be—building trust
+              and fostering strong, comfortable relationships with our loyal
+              customers. Quality has been at the heart of everything we do, and
+              we are committed to delivering the perfect backpack, backed by a
+              1-year warranty.
+            </p>
+            <p className="max-w-[50ch]">
+              Now, I am proud to lead our Nepali bag brand into the digital
+              world. We are excited to offer our exceptional products to
+              customers across the globe, making it easier than ever to connect
+              with our brand and share in our journey.
+            </p>
+            <p className="max-w-[50ch] text-balance">
+              The future is bright, and we’re moving forward with the same
+              passion and commitment that started it all. Thank you for being a
+              part of our story—because every adventure deserves the perfect
+              bag.
+            </p>
+
+            <div className="flex items-center gap-4">
+              <Image
+                className="h-16 w-16 rounded-full object-cover"
+                src="/kushal.jpg"
+                alt="Kushal Timilsina "
+                height={20}
+                width={20}
+              />
+              <div>
                 <strong className="text-lg">Kushal Timilsina</strong>
-                <p>CEO and Founder</p>
+                <p>Managing Director</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative">
+            <Image
+              className="w-full rounded-3xl"
+              src="/kushal.jpg"
+              alt="Kushal Timilsina"
+              height={400}
+              width={400}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-primary/10">
+        <div className="container grid items-center gap-8 py-16 md:gap-10 md:py-20 lg:grid-cols-2 lg:gap-20 lg:py-24">
+          <div className="relative">
+            <Image
+              className="w-full rounded-3xl"
+              src="/anil.jpg"
+              alt="Anil Sapkota"
+              height={400}
+              width={400}
+            />
+          </div>
+          <div className="space-y-6 lg:space-y-8">
+            <h2 className="max-w-[20ch] text-balance text-3xl font-bold tracking-tighter md:text-4xl lg:text-5xl">
+              Elevate Your Journey: Discover Exceptional Bags
+            </h2>
+
+            <p className="max-w-[56ch] text-balance">
+              It’s been 8 incredible years being part of the NBU Bags family. I
+              started my journey in the bag packing department, learning the
+              ropes from the ground up. After 5 years of dedication and growth,
+              I was proud to be promoted to the accounts section. Today, I’m
+              honored to serve as an all-rounder manager, overseeing all
+              departments and contributing to the continued success of our
+              company.
+            </p>
+            <p className="max-w-[56ch] text-balance">
+              When I first joined, we had around 50 machines running. Now, we’ve
+              more than doubled that, with over 108 machines producing
+              high-quality backpacks, each backed by a 1-year warranty. Our
+              growth has been fueled by a commitment to trust, quality, and
+              building strong relationships with our loyal customers.
+            </p>
+            <p className="max-w-[56ch] text-balance">
+              Now, it’s time to take the next big step—hello, digital world!
+              We’re excited to bring our exceptional Nepali bag brand to
+              customers worldwide through our digital platforms. I feel truly
+              blessed to be part of the NBU Bags family and to witness this
+              amazing journey firsthand.
+            </p>
+            <p className="max-w-[50ch]">
+              Thank you for being part of our story—because every adventure
+              deserves the perfect bag.
+            </p>
+
+            <div className="flex items-center gap-4">
+              <Image
+                className="h-16 w-16 rounded-full object-cover"
+                src="/anil.jpg"
+                alt="Founder"
+                height={20}
+                width={20}
+              />
+              <div>
+                <strong className="text-lg">Anil Sapkota</strong>
+                <p>All Rounder Manager</p>
               </div>
             </div>
           </div>
@@ -143,7 +271,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="container py-16 md:py-20 lg:py-24">
+      {/* <section className="container py-16 md:py-20 lg:py-24">
         <Carousel
           opts={{ align: "start", slidesToScroll: 1, loop: true }}
           className="grid items-center gap-8 md:grid-cols-[1fr,2fr] md:gap-10"
@@ -190,7 +318,7 @@ export default function AboutPage() {
             </CarouselContent>
           </div>
         </Carousel>
-      </section>
+      </section> */}
     </>
   );
 }
