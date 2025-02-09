@@ -176,12 +176,12 @@ export default function AboutPage() {
               <Image
                 className="h-16 w-16 rounded-full object-cover"
                 src="/kushal.jpg"
-                alt="Kushal Timilsina "
+                alt="Kushal Timalsina "
                 height={20}
                 width={20}
               />
               <div>
-                <strong className="text-lg">Kushal Timilsina</strong>
+                <strong className="text-lg">Kushal Timalsina</strong>
                 <p>Managing Director</p>
               </div>
             </div>
@@ -191,7 +191,7 @@ export default function AboutPage() {
             <Image
               className="w-full rounded-3xl"
               src="/kushal.jpg"
-              alt="Kushal Timilsina"
+              alt="Kushal Timalsina"
               height={400}
               width={400}
             />
