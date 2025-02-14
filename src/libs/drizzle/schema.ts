@@ -187,6 +187,20 @@ export const uploadedFilesTable = pgTable("uploaded_files", {
   uploadedAt: timestamp("uploaded_at").notNull().defaultNow(),
 });
 
+export const contactEntriesTable = pgTable("contact_entries", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+export type ContactEntriesSelectType = typeof contactEntriesTable.$inferSelect;
+
 export const productsRelations = relations(productsTable, ({ many, one }) => ({
   productsToFiles: many(productFilesTable),
   productToSizes: many(productSizesTable),

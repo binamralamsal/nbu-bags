@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { deleteContactEntryAction } from "../server/contact-entries.actions";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import {
@@ -18,11 +19,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -36,18 +41,18 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteCategoryAction } from "@/features/products/server/products.actions";
-
-export type Category = {
+export type ContactEntry = {
   id: number;
   name: string;
-  slug: string;
+  email: string;
+  phone: string;
+  message: string;
   createdAt: Date;
   updatedAt: Date;
 };
-export type CategoriesAllowedKeys = keyof Category;
+export type ContactEntryAllowedKeys = keyof ContactEntry;
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<ContactEntry>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -61,10 +66,40 @@ export const columns: ColumnDef<Category>[] = [
     ),
   },
   {
-    accessorKey: "slug",
+    accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Slug" />
+      <DataTableColumnHeader column={column} title="Email" />
     ),
+  },
+  {
+    accessorKey: "phone",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Phone Number" />
+    ),
+  },
+  {
+    id: "message",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Message" />
+    ),
+    cell: ({ row }) => {
+      const { message, name } = row.original;
+
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              View Message
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent>
+            <DialogTitle>{name}&apos; message</DialogTitle>
+            {message}
+          </DialogContent>
+        </Dialog>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
@@ -105,14 +140,14 @@ export const columns: ColumnDef<Category>[] = [
   {
     id: "actions",
     cell: function CellComponent({ row }) {
-      const category = row.original;
+      const contactEntry = row.original;
 
       const [deleteDialogOpened, setDeleteDialogOpened] = useState(false);
       const [actionsDropdownOpened, setActionsDropdownOpened] = useState(false);
       const router = useRouter();
 
-      async function handleDeleteCategory() {
-        const response = await deleteCategoryAction(category.id);
+      async function handleDeleteContactEntry() {
+        const response = await deleteContactEntryAction(contactEntry.id);
 
         if (response.status === "SUCCESS") {
           toast.success(response.message);
@@ -138,13 +173,6 @@ export const columns: ColumnDef<Category>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/products/categories/edit/${category.id}`}>
-                Edit
-              </Link>
-            </DropdownMenuItem>
             <AlertDialog
               open={deleteDialogOpened}
               onOpenChange={setDeleteDialogOpened}
@@ -161,7 +189,7 @@ export const columns: ColumnDef<Category>[] = [
                     <strong>
                       {row.original.name} #{row.original.id}
                     </strong>{" "}
-                    category?
+                    contact entry?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete{" "}
@@ -173,7 +201,10 @@ export const columns: ColumnDef<Category>[] = [
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <Button variant="destructive" onClick={handleDeleteCategory}>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteContactEntry}
+                  >
                     Delete
                   </Button>
                 </AlertDialogFooter>

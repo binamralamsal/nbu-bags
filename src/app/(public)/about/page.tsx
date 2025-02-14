@@ -28,37 +28,42 @@ import { site } from "@/configs/site";
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-primary/10">
-        <div className="container grid gap-4 py-10 md:grid-cols-[3fr,2fr] md:py-14 lg:py-16">
-          <div className="space-y-4">
-            <h2 className="text-balance text-2xl font-bold tracking-tighter md:text-3xl lg:text-4xl">
-              Your Style, Your Statement Discover Premium Bags at {site.name}
-            </h2>
+      <section className="relative overflow-hidden bg-primary/5">
+        <div className="bg-grid-white/10 dark:bg-grid-black/10 absolute inset-0 [mask-image:linear-gradient(0deg,transparent,black)]"></div>
+        <div className="container relative grid gap-8 py-16 md:grid-cols-[3fr,2fr] md:py-20 lg:py-24">
+          <div className="space-y-6">
+            <div className="inline-flex items-center rounded-lg bg-background/95 px-3 py-1 text-sm font-medium">
+              🎯 Our Mission
+            </div>
+            <h1 className="text-balance text-4xl font-bold tracking-tighter md:text-5xl lg:text-6xl">
+              Crafting Excellence in Every Stitch
+            </h1>
+            <p className="text-lg text-muted-foreground md:text-xl">
+              From humble beginnings to industry leadership, our journey is
+              defined by quality, innovation, and customer satisfaction.
+            </p>
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/"
-                className="font-semibold transition hover:text-primary"
+                className="font-medium transition hover:text-primary"
               >
                 Home
               </Link>
-              <ChevronRightIcon className="h-5 w-5" />
-              <Link
-                href="/about"
-                className="font-semibold transition hover:text-primary"
-              >
-                About
-              </Link>
+              <ChevronRightIcon className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium text-primary">About</span>
             </div>
           </div>
 
-          <div className="flex gap-4 md:gap-6 md:justify-self-end lg:gap-8">
-            <div className="flex flex-col justify-center gap-1">
-              <div className="text-4xl font-bold lg:text-6xl">50+</div>
-              <div className="font-semibold">Items Sale</div>
+          <div className="flex gap-6 md:gap-8 md:justify-self-end lg:gap-12">
+            <div className="flex flex-col justify-center gap-2">
+              <div className="text-4xl font-bold lg:text-6xl">108+</div>
+              <div className="font-medium text-muted-foreground">Designs</div>
             </div>
-            <div className="flex flex-col justify-center gap-1">
-              <div className="text-4xl font-bold lg:text-6xl">400%</div>
-              <div className="font-semibold">Return on investment</div>
+            <div className="flex flex-col justify-center gap-2">
+              <div className="text-4xl font-bold lg:text-6xl">20+</div>
+              <div className="font-medium text-muted-foreground">
+                Years Experience
+              </div>
             </div>
           </div>
         </div>

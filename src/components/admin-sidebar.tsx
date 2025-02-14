@@ -27,6 +27,7 @@ import {
 import {
   ChevronRightIcon,
   CommandIcon,
+  ContactRoundIcon,
   FileIcon,
   ShoppingCartIcon,
   UsersIcon,
@@ -64,6 +65,11 @@ const nav = [
     title: "Media",
     url: "/admin/media",
     icon: FileIcon,
+  },
+  {
+    title: "Contact Entries",
+    url: "/admin/contact-entries",
+    icon: ContactRoundIcon,
   },
   {
     title: "Users",
