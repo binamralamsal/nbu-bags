@@ -62,7 +62,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
 
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
-  function handleColorClicked(colorId: number) {
+  function handleColorClick(colorId: number) {
     const index = product.images.findIndex(
       (image) => image.color?.id === colorId,
     );
@@ -89,7 +89,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
           {product.category && (
             <Link
               href={`/products?categories=${product.category.slug}`}
-              className="text-muted-foreground transition hover:text-primary"
+              className="text-sm font-medium text-primary transition hover:text-primary/80"
             >
               {product.category.name}
             </Link>
@@ -100,50 +100,66 @@ export function SingleProductDetails({ product }: { product: Product }) {
           </h2>
         </div>
         <Separator />
-        <div className="text-xl text-gray-700">
-          {product.salePrice ? (
-            <s className="text-gray-500">
-              Rs. {product.price.toLocaleString()}
-            </s>
-          ) : (
-            <span>Rs. {product.price.toLocaleString()}</span>
-          )}
 
-          {product.salePrice && (
-            <span className="ml-2 font-medium text-primary">
-              Rs. {product.salePrice.toLocaleString()}
-            </span>
+        <div className="flex items-center gap-4">
+          {product.salePrice ? (
+            <>
+              <p className="text-3xl font-bold text-gray-900">
+                Rs. {product.salePrice.toLocaleString()}
+              </p>
+              <p className="text-xl text-gray-500 line-through">
+                Rs. {product.price.toLocaleString()}
+              </p>
+              <span className="rounded-full bg-green-100 px-2 py-1 text-sm font-semibold text-green-700">
+                {Math.round((1 - product.salePrice / product.price) * 100)}% OFF
+              </span>
+            </>
+          ) : (
+            <p className="text-3xl font-bold text-gray-900">
+              ₹{product.price.toLocaleString()}
+            </p>
           )}
         </div>
-        {product.sizes.length > 0 && (
-          <div className="flex gap-1">
-            <h3 className="font-semibold">Sizes: </h3>
-            <span className="text-muted-foreground">
-              {product.sizes.map((size) => size.name).join(", ")}
-            </span>
-          </div>
-        )}
+
         {colors.length > 0 && (
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold">Colors: </h3>
-            <div className="flex gap-1">
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-900">Color</h3>
+            <div className="flex gap-2">
               {colors.map((color) => (
-                <Button
-                  variant="ghost"
+                <button
                   key={color.id}
-                  className="h-6 w-6 rounded-full p-0 lg:h-8 lg:w-8"
+                  onClick={() => handleColorClick(color.id)}
+                  className={`h-8 w-8 rounded-full border-2 ${
+                    product.images[activeImageIndex].color?.id === color.id
+                      ? "border-black"
+                      : "border-transparent"
+                  }`}
                   style={{ backgroundColor: color.hex }}
-                  onClick={() => handleColorClicked(color.id)}
-                ></Button>
+                  title={color.name}
+                />
               ))}
             </div>
           </div>
         )}
+
+        {product.sizes.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-900">Size</h3>
+            <div className="flex gap-2">
+              {product.sizes.map((size) => (
+                <button
+                  key={size.id}
+                  className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:border-black"
+                >
+                  {size.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <p>{product.description}</p>
         <div className="grid gap-1">
-          <p className="italic text-muted-foreground">
-            Distributed by Carry Karma
-          </p>
           <div className="grid gap-2 lg:grid-cols-2">
             <Button
               size="lg"
@@ -172,6 +188,9 @@ export function SingleProductDetails({ product }: { product: Product }) {
               </Link>
             </Button>
           </div>
+          <p className="mt-2 text-center text-sm text-gray-500">
+            Distributed by Carry Karma
+          </p>
         </div>
       </div>
     </>

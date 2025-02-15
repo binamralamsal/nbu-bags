@@ -19,6 +19,9 @@ export function ProductCard(props: ProductCardProps) {
 
   const firstImage = props.images[0];
   const secondImage = props.images[1];
+  const discount = props.salePrice
+    ? Math.round(((props.price - props.salePrice) / props.price) * 100)
+    : 0;
 
   return (
     <div>
@@ -53,7 +56,7 @@ export function ProductCard(props: ProductCardProps) {
 
         {props.salePrice && (
           <div className="absolute left-0 top-4 bg-primary px-4 py-1 text-sm uppercase text-primary-foreground">
-            Sale
+            {discount}% off
           </div>
         )}
       </Link>
