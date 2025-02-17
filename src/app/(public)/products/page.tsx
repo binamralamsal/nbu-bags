@@ -3,6 +3,7 @@ import { z } from "zod";
 import { MAX_PRICE_RANGE, MIN_PRICE_RANGE } from "@/configs/constants";
 import { ProductCard } from "@/features/products/components/product-card";
 import { ProductsFilters } from "@/features/products/components/products-filters";
+import { ProductsFiltersHeader } from "@/features/products/components/products-filters-header";
 import { ProductsPagination } from "@/features/products/components/products-pagination";
 import {
   getAllCategories,
@@ -126,12 +127,12 @@ export default async function ProductsPage({
           </div>
         </aside>
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold md:text-3xl">
-              {products.length} Product
-              {products.length > 1 ? "s" : ""}
-            </h2>
-          </div>
+          <ProductsFiltersHeader
+            size={products.length}
+            categories={categories}
+            sizes={sizes}
+            colors={colors}
+          />
 
           <div className="grid gap-6 md:grid-cols-1 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
             {products.map((product) => (

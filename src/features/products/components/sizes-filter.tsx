@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -9,20 +9,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-
-import { CheckedState } from "@radix-ui/react-checkbox";
+import { Button } from "@/components/ui/button";
 
 const CATEGORIES_QUERY_PARAM_KEY = "sizes";
 
 export function SizesFilter({
-  sizes: sizes,
+  sizes,
 }: {
   sizes: { id: number; name: string; slug: string }[];
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = useId();
 
   const getSelectedSizesFromURL = useCallback(() => {
     const urlCategories =
@@ -55,10 +52,8 @@ export function SizesFilter({
     });
   }
 
-  function handleSizeToggle(categorySlug: string, isChecked: CheckedState) {
-    if (typeof isChecked !== "boolean") return;
-
-    const updatedCategories = isChecked
+  function handleSizeToggle(categorySlug: string, isSelected: boolean) {
+    const updatedCategories = isSelected
       ? [...selectedSizes, categorySlug]
       : selectedSizes.filter((slug) => slug !== categorySlug);
 
@@ -66,9 +61,7 @@ export function SizesFilter({
     updateURLWithSizes(updatedCategories);
   }
 
-  function handleAllProductsToggle(isChecked: CheckedState) {
-    if (isChecked !== true) return;
-
+  function handleAllProductsToggle() {
     setSelectedSizes([]);
     updateURLWithSizes([]);
   }
@@ -77,43 +70,29 @@ export function SizesFilter({
     <AccordionItem value="size">
       <AccordionTrigger>Sizes</AccordionTrigger>
       <AccordionContent>
-        <ul>
-          <li>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={`${id}-all`}
-                checked={selectedSizes.length === 0}
-                onCheckedChange={handleAllProductsToggle}
-              />
-              <label
-                htmlFor={`${id}-all`}
-                className="w-full py-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                All Products
-              </label>
-            </div>
-          </li>
-
+        <div className="grid grid-cols-6 gap-4">
+          <Button
+            variant={selectedSizes.length === 0 ? "default" : "outline"}
+            size="sm"
+            onClick={handleAllProductsToggle}
+            className="min-w-[48px]"
+          >
+            All
+          </Button>
           {sizes.map(({ id, name, slug }) => (
-            <li key={id}>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id={`${id}-${slug}`}
-                  checked={selectedSizes.includes(slug)}
-                  onCheckedChange={(isChecked) =>
-                    handleSizeToggle(slug, isChecked)
-                  }
-                />
-                <label
-                  htmlFor={`${id}-${slug}`}
-                  className="w-full py-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {name}
-                </label>
-              </div>
-            </li>
+            <Button
+              key={id}
+              variant={selectedSizes.includes(slug) ? "default" : "outline"}
+              size="sm"
+              onClick={() =>
+                handleSizeToggle(slug, !selectedSizes.includes(slug))
+              }
+              className="min-w-[48px]"
+            >
+              {name}
+            </Button>
           ))}
-        </ul>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -36,9 +36,9 @@ export function PriceRangeFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const initialValue = [MIN_PRICE_RANGE, MAX_PRICE_RANGE];
+  const initialValue = useMemo(() => [MIN_PRICE_RANGE, MAX_PRICE_RANGE], []);
 
-  const getPriceRangeFromURL = () => {
+  const getPriceRangeFromURL = useCallback(() => {
     const urlPriceRange = searchParams.get(PRICE_QUERY_PARAM_KEY)?.split(".");
     if (!urlPriceRange || urlPriceRange.length !== 2) return initialValue;
 
@@ -47,7 +47,7 @@ export function PriceRangeFilter() {
       Math.max(MIN_PRICE_RANGE, min || MIN_PRICE_RANGE),
       Math.min(MAX_PRICE_RANGE, max || MAX_PRICE_RANGE),
     ];
-  };
+  }, [initialValue, searchParams]);
 
   const {
     sliderValue,
@@ -61,40 +61,48 @@ export function PriceRangeFilter() {
     initialValue: getPriceRangeFromURL(),
   });
 
-  const updateURLWithPriceRange = (updatedPriceRange: number[]) => {
-    const updatedSearchParams = new URLSearchParams(searchParams);
+  const updateURLWithPriceRange = useCallback(
+    (updatedPriceRange: number[]) => {
+      const updatedSearchParams = new URLSearchParams(searchParams);
 
-    if (updatedPriceRange.length !== 2) return;
+      if (updatedPriceRange.length !== 2) return;
 
-    if (
-      updatedPriceRange[0] === MIN_PRICE_RANGE &&
-      updatedPriceRange[1] === MAX_PRICE_RANGE
-    ) {
-      updatedSearchParams.delete(PRICE_QUERY_PARAM_KEY);
-    } else {
-      updatedSearchParams.set(
-        PRICE_QUERY_PARAM_KEY,
-        updatedPriceRange.join("."),
-      );
-    }
+      if (
+        updatedPriceRange[0] === MIN_PRICE_RANGE &&
+        updatedPriceRange[1] === MAX_PRICE_RANGE
+      ) {
+        updatedSearchParams.delete(PRICE_QUERY_PARAM_KEY);
+      } else {
+        updatedSearchParams.set(
+          PRICE_QUERY_PARAM_KEY,
+          updatedPriceRange.join("."),
+        );
+      }
 
-    router.push(`/products?${updatedSearchParams.toString()}`, {
-      scroll: false,
-    });
-  };
+      router.push(`/products?${updatedSearchParams.toString()}`, {
+        scroll: false,
+      });
+    },
+    [router, searchParams],
+  );
 
-  const debouncedUpdateURL = useRef(
-    debounce(updateURLWithPriceRange, 500),
-  ).current;
+  const debouncedUpdateURLWithPriceRange = useMemo(
+    () => debounce(updateURLWithPriceRange, 500),
+    [updateURLWithPriceRange],
+  );
+
+  useEffect(() => {
+    handleSliderChange(getPriceRangeFromURL());
+  }, [getPriceRangeFromURL, handleSliderChange]);
 
   const handleSliderChangeWithURLUpdate = (newValue: number[]) => {
     handleSliderChange(newValue);
-    debouncedUpdateURL(newValue);
+    debouncedUpdateURLWithPriceRange(newValue);
   };
 
   const handleInputBlurWithURLUpdate = (value: string, index: number) => {
     validateAndUpdateValue(value, index);
-    debouncedUpdateURL(sliderValue);
+    debouncedUpdateURLWithPriceRange(sliderValue);
   };
 
   return (
