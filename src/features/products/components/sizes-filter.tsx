@@ -70,7 +70,7 @@ export function SizesFilter({
     <AccordionItem value="size">
       <AccordionTrigger>Sizes</AccordionTrigger>
       <AccordionContent>
-        <div className="grid grid-cols-6 gap-4">
+        <div className="flex grid-cols-6 flex-wrap gap-2">
           <Button
             variant={selectedSizes.length === 0 ? "default" : "outline"}
             size="sm"
