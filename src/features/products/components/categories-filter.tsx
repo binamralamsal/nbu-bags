@@ -52,7 +52,9 @@ export function CategoriesFilter({
       );
     }
 
-    router.push(`/products?${updatedSearchParams.toString()}`);
+    router.push(`/products?${updatedSearchParams.toString()}`, {
+      scroll: false,
+    });
   }
 
   function handleCategoryToggle(categorySlug: string, isChecked: CheckedState) {

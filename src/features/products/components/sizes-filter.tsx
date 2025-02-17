@@ -50,7 +50,9 @@ export function SizesFilter({
       );
     }
 
-    router.push(`/products?${updatedSearchParams.toString()}`);
+    router.push(`/products?${updatedSearchParams.toString()}`, {
+      scroll: false,
+    });
   }
 
   function handleSizeToggle(categorySlug: string, isChecked: CheckedState) {

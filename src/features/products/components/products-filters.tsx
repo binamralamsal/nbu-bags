@@ -51,7 +51,7 @@ export function ProductsFilters({
 
     const query = new URLSearchParams(searchParams.toString());
     query.set("accordion", newOpenItems.join("."));
-    router.push(`?${query.toString()}`);
+    router.push(`?${query.toString()}`, { scroll: false });
   };
 
   return (

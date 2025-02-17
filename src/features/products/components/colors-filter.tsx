@@ -49,7 +49,9 @@ export function ColorsFilter({
       updatedSearchParams.set(COLORS_QUERY_PARAM_KEY, updatedColors.join("."));
     }
 
-    router.push(`/products?${updatedSearchParams.toString()}`);
+    router.push(`/products?${updatedSearchParams.toString()}`, {
+      scroll: false,
+    });
   }
 
   function handleColorToggle(colorSlug: string) {

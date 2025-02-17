@@ -78,7 +78,9 @@ export function PriceRangeFilter() {
       );
     }
 
-    router.push(`/products?${updatedSearchParams.toString()}`);
+    router.push(`/products?${updatedSearchParams.toString()}`, {
+      scroll: false,
+    });
   };
 
   const debouncedUpdateURL = useRef(
