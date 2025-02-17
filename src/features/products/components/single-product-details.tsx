@@ -105,7 +105,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
           {product.salePrice ? (
             <>
               <p className="text-3xl font-bold text-gray-900">
-                Rs. {product.salePrice.toLocaleString()}
+                MRP Rs. {product.salePrice.toLocaleString()}
               </p>
               <p className="text-xl text-gray-500 line-through">
                 Rs. {product.price.toLocaleString()}

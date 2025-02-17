@@ -77,7 +77,7 @@ export function ProductCard(props: ProductCardProps) {
 
           {props.salePrice && (
             <span className="ml-2 text-primary">
-              Rs. {props.salePrice.toLocaleString()}
+              MRP Rs. {props.salePrice.toLocaleString()}
             </span>
           )}
         </div>
