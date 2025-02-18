@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { InstagramIcon } from "@/components/icons/instagram-icon";
@@ -9,6 +10,7 @@ import { WhatsappIcon } from "@/components/icons/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
+import { site } from "@/configs/site";
 import { ProductImagesGallery } from "@/features/products/components/product-images-gallery";
 
 type Color = {
@@ -71,9 +73,8 @@ export function SingleProductDetails({ product }: { product: Product }) {
     }
   }
 
-  const host = window?.location.origin;
   const messageToBeShared = encodeURIComponent(
-    `I am interested to buy ${product.name}\n\n${host}/${product.slug}`,
+    `I am interested to buy ${product.name}\n\n${site.url}/${product.slug}`,
   );
 
   return (
