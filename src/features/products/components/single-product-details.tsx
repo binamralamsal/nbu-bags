@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { headers } from "next/headers";
 import Link from "next/link";
 
 import { InstagramIcon } from "@/components/icons/instagram-icon";
