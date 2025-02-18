@@ -3,6 +3,9 @@ import Link from "next/link";
 
 import { PlaceholderImage } from "@/components/placeholder-image";
 
+import { Product, WithContext } from "schema-dts";
+
+import { site } from "@/configs/site";
 import { cn } from "@/utils/cn";
 
 type ProductCardProps = {
@@ -22,6 +25,26 @@ export function ProductCard(props: ProductCardProps) {
   const discount = props.salePrice
     ? Math.round(((props.price - props.salePrice) / props.price) * 100)
     : 0;
+
+  const jsonLd: WithContext<Product> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: props.name,
+    image: firstImage?.url || "/file.svg",
+    description: `Buy ${props.name} at a great price!`,
+    sku: props.slug,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "NRS",
+      price: props.salePrice || props.price,
+      url: productUrl,
+      seller: {
+        "@type": "Organization",
+        name: site.name,
+      },
+    },
+    category: props.category || "General",
+  };
 
   return (
     <div>
@@ -82,6 +105,10 @@ export function ProductCard(props: ProductCardProps) {
           )}
         </div>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </div>
   );
 }

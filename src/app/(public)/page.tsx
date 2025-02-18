@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,10 @@ import { ProductCard } from "@/features/products/components/product-card";
 import { getAllProducts } from "@/features/products/server/products.query";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Home",
+};
 
 export default async function Home() {
   const { products } = await getAllProducts({

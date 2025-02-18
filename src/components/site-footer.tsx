@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 
 import { FacebookIcon, InstagramIcon } from "lucide-react";
 
+import { site } from "@/configs/site";
 import { getAllCategories } from "@/features/products/server/products.query";
 
 export async function SiteFooter() {
@@ -81,10 +82,7 @@ export async function SiteFooter() {
                 className="brightness-125 transition hover:brightness-200"
                 asChild
               >
-                <Link
-                  href="https://www.facebook.com/people/NBU-BAGS/61567289293320/"
-                  target="_blank"
-                >
+                <Link href={site.facebook} target="_blank">
                   <FacebookIcon className="h-4 w-4 fill-secondary-foreground" />
                 </Link>
               </Button>
@@ -96,7 +94,7 @@ export async function SiteFooter() {
                 className="brightness-125 transition hover:brightness-200"
                 asChild
               >
-                <Link href="https://www.instagram.com/nbu_bags" target="_blank">
+                <Link href={site.instagram} target="_blank">
                   <InstagramIcon className="h-4 w-4" />
                 </Link>
               </Button>

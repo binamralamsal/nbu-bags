@@ -1,29 +1,28 @@
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from "@/components/ui/carousel";
-
 import { ChevronRightIcon } from "lucide-react";
 
 import { site } from "@/configs/site";
 
-// const team = [
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-//   { name: "Emma Watson", role: "Founder", photo: "/founder.jpg" },
-// ];
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn more about our journey, mission, and team at NBU Bags.",
+  keywords: ["about us", "NBU Bags", "team", "company", "mission", "Nepal"],
+  openGraph: {
+    title: "About Us",
+    description: "Learn more about our journey, mission, and team at NBU Bags.",
+    url: `${site.url}/about`,
+    siteName: site.name,
+    type: "website",
+  },
+  alternates: {
+    canonical: `${site.url}/about`,
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -275,55 +274,6 @@ export default function AboutPage() {
           </Button>
         </div>
       </section>
-
-      {/* <section className="container py-16 md:py-20 lg:py-24">
-        <Carousel
-          opts={{ align: "start", slidesToScroll: 1, loop: true }}
-          className="grid items-center gap-8 md:grid-cols-[1fr,2fr] md:gap-10"
-        >
-          <div className="space-y-8 md:space-y-14">
-            <div className="space-y-4">
-              <h2 className="max-w-[20ch] text-balance text-3xl font-bold tracking-tighter md:text-4xl lg:text-5xl">
-                Meet Our Team of Creators
-              </h2>
-              <p className="text-balance">
-                Our team is passionate about design, quality, and innovation,
-                ensuring every NBU Bag meets the highest standards. With
-                expertise and dedication, we create bags that blend style and
-                functionality seamlessly.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <CarouselPrevious className="static h-10 w-10" />
-              <CarouselNext className="static h-10 w-10" />
-            </div>
-          </div>
-          <div>
-            <CarouselContent className="-ml-8 max-w-[100vw] md:max-w-[60vw]">
-              {team.map((person, index) => (
-                <CarouselItem
-                  key={index}
-                  className="basis-[100%] select-none space-y-4 pl-8 sm:basis-1/2 md:basis-1/2 lg:basis-1/3"
-                >
-                  <Image
-                    src={person.photo}
-                    width={400}
-                    height={400}
-                    alt={person.name}
-                    className="w-full rounded-md"
-                  />
-                  <div className="text-center">
-                    <strong className="text-lg">{person.name}</strong>
-                    <div className="text-sm text-muted-foreground">
-                      {person.role}
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </div>
-        </Carousel>
-      </section> */}
     </>
   );
 }

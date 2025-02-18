@@ -1,6 +1,9 @@
+import { Metadata } from "next";
+
 import { z } from "zod";
 
 import { MAX_PRICE_RANGE, MIN_PRICE_RANGE } from "@/configs/constants";
+import { site } from "@/configs/site";
 import { ProductCard } from "@/features/products/components/product-card";
 import { ProductsFilters } from "@/features/products/components/products-filters";
 import { ProductsFiltersHeader } from "@/features/products/components/products-filters-header";
@@ -12,6 +15,31 @@ import {
   getAllSizes,
 } from "@/features/products/server/products.query";
 import { SearchParams } from "@/types";
+
+export const metadata: Metadata = {
+  title: "Discover Our Premium Bags",
+  description:
+    "Browse through our collection of high-quality bags, designed for style and functionality.",
+  keywords: [
+    "bags",
+    "premium bags",
+    "collection",
+    "fashion",
+    "high-quality bags",
+  ],
+  openGraph: {
+    title: "Discover Our Premium Bags",
+    description:
+      "Browse through our collection of high-quality bags, designed for style and functionality.",
+    url: `${site.name}/products`,
+    siteName: site.name,
+    type: "website",
+  },
+
+  alternates: {
+    canonical: `${site.name}/products`,
+  },
+};
 
 export default async function ProductsPage({
   searchParams: rawSearchParams,

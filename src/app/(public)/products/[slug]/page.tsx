@@ -1,7 +1,10 @@
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { Product, WithContext } from "schema-dts";
 import { z } from "zod";
 
+import { site } from "@/configs/site";
 import { SingleProductDetails } from "@/features/products/components/single-product-details";
 import { getProductBySlug } from "@/features/products/server/products.query";
 
@@ -17,9 +20,66 @@ export default async function SingleProductPage({
   const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
+  const jsonLd: WithContext<Product> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.images[0]?.url || "/file.svg",
+    description: product.description,
+    sku: product.slug,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "NRS",
+      price: product.salePrice || product.price,
+      url: `${site.name}/products/${product.slug}`,
+      seller: {
+        "@type": "Organization",
+        name: site.name,
+      },
+    },
+    category: product.category?.name || "General",
+    brand: {
+      "@type": "Brand",
+      name: site.name,
+    },
+    size: product.sizes.map((size) => size.name),
+  };
+
   return (
     <section className="container grid gap-8 py-4 md:grid-cols-2 md:py-6 lg:gap-16 lg:py-8">
       <SingleProductDetails product={product} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </section>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const rawSlug = params.slug;
+  const { error, data: slug } = z.coerce.string().safeParse(rawSlug);
+  if (error) return notFound();
+
+  const product = await getProductBySlug(slug);
+  if (!product) return notFound();
+
+  return {
+    title: product.name,
+    description: product.description,
+    keywords: [product.name, product.category?.name ?? "", "bags", "fashion"],
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      url: `${site.url}/products/${product.slug}`,
+      images: product.images.map((image) => image.url),
+    },
+    alternates: {
+      canonical: `${site.url}/products/${product.slug}`,
+    },
+  };
 }

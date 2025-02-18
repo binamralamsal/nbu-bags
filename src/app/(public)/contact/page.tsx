@@ -1,5 +1,4 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,57 @@ import {
   MapPinIcon,
   PhoneIcon,
 } from "lucide-react";
+import { Organization, WithContext } from "schema-dts";
 
+import { site } from "@/configs/site";
 import { ContactForm } from "@/features/contact-entries/components/contact-form";
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description: "Get in touch with us for any inquiries or support.",
+  keywords: ["contact", "support", "customer service", site.name],
+  openGraph: {
+    title: "Contact Us",
+    description: "Reach out to our team for any assistance or inquiries.",
+    url: `${site.url}/contact`,
+    siteName: site.name,
+    type: "website",
+  },
+  alternates: {
+    canonical: `${site.url}/contact`,
+  },
+};
+
+const jsonLd: WithContext<Organization> = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  logo: `${site.url}/logo.svg`,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      telephone: "+977-9818385342",
+      contactType: "customer service",
+      areaServed: "NP",
+      availableLanguage: ["English", "Nepali"],
+    },
+    {
+      "@type": "ContactPoint",
+      email: "info@nexorith.com",
+      contactType: "support",
+    },
+  ],
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1421 Coburn Hollow Road, Near Center Point",
+    addressLocality: "Kathmandu",
+    addressRegion: "Bagmati",
+    postalCode: "44600",
+    addressCountry: "NP",
+  },
+  sameAs: [site.facebook, site.instagram],
+};
 
 export default function ContactPage() {
   return (
@@ -103,6 +151,10 @@ export default function ContactPage() {
           title="Office Location"
         />
       </section>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </main>
   );
 }
