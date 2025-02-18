@@ -8,11 +8,13 @@ import { site } from "@/configs/site";
 import { SingleProductDetails } from "@/features/products/components/single-product-details";
 import { getProductBySlug } from "@/features/products/server/products.query";
 
+type SingleProductPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
 export default async function SingleProductPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: SingleProductPageProps) {
   const rawSlug = (await params).slug;
   const { error, data: slug } = z.coerce.string().safeParse(rawSlug);
   if (error) return notFound();
@@ -58,10 +60,8 @@ export default async function SingleProductPage({
 
 export async function generateMetadata({
   params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const rawSlug = params.slug;
+}: SingleProductPageProps): Promise<Metadata> {
+  const rawSlug = (await params).slug;
   const { error, data: slug } = z.coerce.string().safeParse(rawSlug);
   if (error) return notFound();
 
