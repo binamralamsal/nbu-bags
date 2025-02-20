@@ -56,12 +56,12 @@ export function ProductCard(props: ProductCardProps) {
             width={600}
             height={600}
             className={cn(
-              "h-60 w-full object-cover transition duration-500 md:h-80",
+              "h-96 w-full object-cover transition duration-500",
               secondImage && "group-hover:opacity-0",
             )}
           />
         ) : (
-          <PlaceholderImage className="h-60 w-full object-cover md:h-80" />
+          <PlaceholderImage className="h-96 w-full object-cover" />
         )}
 
         {secondImage && (
@@ -71,7 +71,7 @@ export function ProductCard(props: ProductCardProps) {
             width={600}
             height={600}
             className={cn(
-              "absolute left-0 top-0 h-60 w-full object-cover opacity-0 transition duration-500 md:h-80",
+              "absolute left-0 top-0 h-96 w-full object-cover opacity-0 transition duration-500",
               secondImage && "group-hover:opacity-100",
             )}
           />
