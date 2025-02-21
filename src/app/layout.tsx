@@ -39,7 +39,7 @@ const jsonLd: WithContext<Organization> = {
   url: site.url,
   logo: `${site.url}/logo.svg`,
   description: site.description,
-  foundingDate: "2020-01-01",
+  foundingDate: site.foundingDate,
   founders: [
     {
       "@type": "Person",
@@ -48,16 +48,16 @@ const jsonLd: WithContext<Organization> = {
   ],
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Your Street Address",
-    addressLocality: "Kathmandu",
-    addressRegion: "Bagmati",
-    postalCode: "44600",
-    addressCountry: "NP",
+    streetAddress: site.streetAddress,
+    addressLocality: site.addressLocality,
+    addressRegion: site.addressRegion,
+    postalCode: site.postalCode,
+    addressCountry: site.addressCountry,
   },
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: "+977-9800000000",
+      telephone: site.telephone,
       contactType: "customer service",
       areaServed: "NP",
       availableLanguage: ["English", "Nepali"],

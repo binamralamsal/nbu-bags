@@ -35,9 +35,14 @@ export function ProductCard(props: ProductCardProps) {
     sku: props.slug,
     offers: {
       "@type": "Offer",
-      priceCurrency: "NRS",
+      priceCurrency: "NPR",
       price: props.salePrice || props.price,
       url: productUrl,
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        merchantReturnDays: 7,
+      },
+      availability: "InStock",
       seller: {
         "@type": "Organization",
         name: site.name,

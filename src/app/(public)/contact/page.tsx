@@ -39,24 +39,24 @@ const jsonLd: WithContext<Organization> = {
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: "+977-9818385342",
+      telephone: site.telephone,
       contactType: "customer service",
       areaServed: "NP",
       availableLanguage: ["English", "Nepali"],
     },
     {
       "@type": "ContactPoint",
-      email: "info@nexorith.com",
+      email: "nbubags@gmail.com",
       contactType: "support",
     },
   ],
   address: {
     "@type": "PostalAddress",
-    streetAddress: "1421 Coburn Hollow Road, Near Center Point",
-    addressLocality: "Kathmandu",
-    addressRegion: "Bagmati",
-    postalCode: "44600",
-    addressCountry: "NP",
+    streetAddress: site.streetAddress,
+    addressLocality: site.addressLocality,
+    addressRegion: site.addressRegion,
+    postalCode: site.postalCode,
+    addressCountry: site.addressCountry,
   },
   sameAs: [site.facebook, site.instagram],
 };
@@ -104,9 +104,7 @@ export default function ContactPage() {
             <div className="flex h-full flex-col justify-center gap-4 rounded-md border bg-primary/10 p-6 shadow-sm lg:p-8">
               <MapPinIcon className="text-primary" />
               <h3 className="text-lg font-bold">Office Address</h3>
-              <div>
-                1421 Coburn Hollow Road Metamora, Near Center Point, IL 61548.
-              </div>
+              <div>{site.streetAddress}</div>
             </div>
             <div className="flex h-full flex-col justify-center gap-4 rounded-md border bg-primary/10 p-6 shadow-sm lg:p-8">
               <PhoneIcon className="text-primary" />
@@ -114,14 +112,26 @@ export default function ContactPage() {
               <div>
                 Let&apos;s work together towards a common goal - get in touch!
               </div>
-              <Button variant="link" className="inline-block p-0" asChild>
-                <Link
-                  href="https://api.whatsapp.com/send?phone=9779818385342"
-                  target="_blank"
+              <div className="flex flex-wrap gap-1">
+                <Button
+                  variant="link"
+                  className="inline-block h-auto px-1 py-2"
+                  asChild
                 >
-                  +977 981-8385342{" "}
-                </Link>
-              </Button>
+                  <Link
+                    href="https://api.whatsapp.com/send?phone=9779841326275"
+                    target="_blank"
+                  >
+                    +977 9841326275{" "}
+                  </Link>
+                </Button>
+                <Button
+                  variant="link"
+                  className="inline-block h-auto px-1 py-2"
+                >
+                  01-5353733{" "}
+                </Button>
+              </div>
             </div>
             <div className="flex h-full flex-col justify-center gap-4 rounded-md border bg-primary/10 p-6 shadow-sm lg:col-span-2 lg:p-8">
               <MailIcon className="text-primary" />
@@ -131,7 +141,7 @@ export default function ContactPage() {
                 within 24 hours.
               </div>
               <Button variant="link" className="inline-block p-0" asChild>
-                <Link href="mailto:info@nexorith.com">info@nexorith.com</Link>
+                <Link href="mailto:nbubags@gmail.com">nbubags@gmail.com</Link>
               </Button>
             </div>
           </div>

@@ -31,12 +31,17 @@ export default async function SingleProductPage({
     sku: product.slug,
     offers: {
       "@type": "Offer",
-      priceCurrency: "NRS",
+      priceCurrency: "NPR",
       price: product.salePrice || product.price,
+      availability: "InStock",
       url: `${site.name}/products/${product.slug}`,
       seller: {
         "@type": "Organization",
         name: site.name,
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        merchantReturnDays: 7,
       },
     },
     category: product.category?.name || "General",
