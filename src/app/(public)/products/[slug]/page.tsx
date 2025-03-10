@@ -81,7 +81,7 @@ export async function generateMetadata({
       title: product.name,
       description: product.description,
       url: `${site.url}/products/${product.slug}`,
-      images: product.images.map((image) => image.url),
+      images: product.images.map((image) => `${site.url}${image.url}`),
     },
     alternates: {
       canonical: `${site.url}/products/${product.slug}`,
