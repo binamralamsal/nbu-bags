@@ -167,7 +167,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
               className="bg-green-500 transition duration-200 hover:bg-green-600"
             >
               <Link
-                href={`https://wa.me/9779767489387?text=${messageToBeShared}`}
+                href={`https://wa.me/9779813920689?text=${messageToBeShared}`}
                 target="_blank"
               >
                 <WhatsappIcon className="fill-white" />
@@ -180,7 +180,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
               className="bg-red-500 transition duration-200 hover:bg-red-600"
             >
               <Link
-                href={`https://ig.me/m/carry.karma?text=${messageToBeShared}`}
+                href={`https://ig.me/m/nbu_bags?text=${messageToBeShared}`}
                 target="_blank"
               >
                 <InstagramIcon className="fill-white" />
@@ -188,11 +188,9 @@ export function SingleProductDetails({ product }: { product: Product }) {
               </Link>
             </Button>
           </div>
-          <p className="mt-2 text-center text-sm text-gray-500">
-            Distributed by Carry Karma
-          </p>
         </div>
       </div>
     </>
   );
 }
+
