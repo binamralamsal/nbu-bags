@@ -73,7 +73,7 @@ export function SingleProductDetails({ product }: { product: Product }) {
   }
 
   const messageToBeShared = encodeURIComponent(
-    `I am interested to buy ${product.name}\n\n${site.url}/${product.slug}`,
+    `I am interested to buy ${product.name}\n\n${site.url}/products/${product.slug}`,
   );
 
   return (
@@ -193,4 +193,5 @@ export function SingleProductDetails({ product }: { product: Product }) {
     </>
   );
 }
+
 
